@@ -122,7 +122,7 @@ Here is an outline of the algorithm steps:
 
 This implementation is based on the SSAO chapter found in "Foundations of Game Engine Development, Volume 2: Rendering".
 
-This algorithm runs in two passes. The first pass builds a buffer which represents how much ambient light reaches a given surface. If the value is low the result is less ambient light for that pixel. To build this buffer, a fragment shader samples the structure buffer in 4 places around the current pixel. The 4 places that the fragment shader reads from are randomly offset by a 4x4 rotation texture that we precompute on the CPU. This rotation texture is set up and used in such a way that for every 4x4 group of nearby pixels, they will use 64 unique samples compared to each other.
+This algorithm runs in two passes. The first pass builds a buffer which represents how much ambient light reaches a given surface. If the value is low the result is less ambient light for that pixel. To build this buffer, a fragment shader samples the structure buffer in 4 places around the current pixel. What it is trying to do is use the structure buffer's information to figure out if there is nearby geometry that is occluding ambient light that would otherwise be reaching the current surface. The 4 places that the fragment shader reads from are randomly offset by a 4x4 rotation texture that we precompute on the CPU. This rotation texture is set up and used in such a way that for every 4x4 group of nearby pixels, they will use 64 unique samples compared to each other.
 
 ![ssao_step1](/assets/ssao_step1.png)
 (Output from the first SSAO pass)
