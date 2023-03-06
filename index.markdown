@@ -13,7 +13,7 @@ title: Portfolio
 
 StratusGFX is a realtime rendering engine written in C++17 using OpenGL 4.6.
 
-[Click here to read a technical breakdown of a single frame.](/rendering/stratusgfx_frameanalysis)
+[Click here to read a technical breakdown of a single frame.](/rendering/stratusgfx/frame_analysis)
 
 Graphics features currently supported:
 * Physically based metallic-roughness pipeline
