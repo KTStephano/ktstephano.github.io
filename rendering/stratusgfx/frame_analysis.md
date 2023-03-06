@@ -177,7 +177,7 @@ During the post processing step the following take place:
 I will likely continue working on this rendering engine to some extent so that I can keep researching and learning about graphics programming. These are the areas I am strongly interested in going forward:
 
 * Porting the renderer to Vulkan
-* Switching to a global illumination approached based on either voxel cone tracing or ray tracing signed distance fields (or maybe something else? I am not sure yet)
+* Switching to a global illumination approach based on either voxel cone tracing or ray tracing signed distance fields (or maybe something else? I am not sure yet)
 * High-quality anti aliasing even while the camera is moving using Temporal Super Sampling Anti-Aliasing (TSSAA) which was showcased in Doom 2016
 
 # Helpful Resources and References
