@@ -147,7 +147,7 @@ The purpose of this step is to simulate how light interacts with participating m
 
 4) Some is occluded completely due to a distant object blocking rays of light.
 
-The result of this is that parts of the scene will appear foggy or hazy while still allowing the viewer to see through to the other side. When there are distant objects blocking light rays, there will be noticeably darker areas in the fog which give the appearance of light rays/God rays (also known as crepuscular rays). This is very noticeable when in a forested scenes or when light is streaming through a window but is blocked by parts of the central frame.
+The result of this is that parts of the scene will appear foggy or hazy while still allowing the viewer to see through to the other side. When there are distant objects blocking light rays, there will be noticeably darker areas in the fog which give the appearance of light rays/God rays (also known as crepuscular rays). This is very noticeable when in a forested scene or when light is streaming through a window but is partially blocked by the central frame.
 
 This Digital Foundry video explains it very well: [https://www.youtube.com/watch?v=G0sYTrX3VHI](https://www.youtube.com/watch?v=G0sYTrX3VHI).
 
