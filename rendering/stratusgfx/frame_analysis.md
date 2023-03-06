@@ -44,7 +44,7 @@ This capability was added very early in development since having it saved tons o
 
 Point lights and virtual point lights pull from their own shadow map caches. Regular point lights use a higher resolution shadow map pool (384x384 or 512x512 both seem to work well), while virtual point lights use a much larger but also much lower resolution shadow map pool.
 
-For each light active nearby the camera, the renderer checks to see if its shadow map is already in the cache and the light hasn't been marked as invalid. If neither are true the previous shadow map is reused - if not the shadow map is regenerated.
+For each light active nearby the camera, the renderer checks to see if its shadow map is already in the cache and the light hasn't been marked as invalid. If so its shadow data is reused. If not then it is added to a light update queue to signal that its data needs to be regenerated.
 
 To save on performance, no more than 3 shadow map updates are performed per frame. Each light is entered into a light update queue to prevent any light from being neglected for too many frames.
 
