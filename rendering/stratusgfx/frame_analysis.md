@@ -5,9 +5,9 @@ permalink: /rendering/stratusgfx/frame_analysis
 ![Sponza in StratusGFX](/assets/Sponza2022_2_1.png)
 *(rendered with StratusGFX - model is Intel Sponza 2022)*
 
-This article will breakdown a lot of the high level technical details of how StratusGFX renders a single frame. A video tech demo can be found here: [https://www.youtube.com/watch?v=9sSz4GXJtQk](https://www.youtube.com/watch?v=9sSz4GXJtQk).
+This article will breakdown a lot of the high level technical details of how StratusGFX renders a single frame. A video tech demo can be found here: [https://www.youtube.com/watch?v=JSGBiP6RbN0](https://www.youtube.com/watch?v=JSGBiP6RbN0).
 
-StratusGFX is a realtime rendering engine I wrote in order to learn about modern graphics programming techniques. Development and testing was done on Windows 10 running with a Ryzen 5 1600 and an Nvidia GTX 1060. The target frame rate for test scenes was 30+ FPS (33 msec or less) running at 1080p.
+StratusGFX is a realtime rendering engine I wrote in order to learn about modern graphics programming techniques. Development and testing was done on Windows 10 running with a Ryzen 5 1600 and an Nvidia GTX 1060. The target frame rate was a minimum of 30 fps (33.33 msec), but most of the scenes in the tech demo ran at 60 fps (16.67 msec) a majority of the time.
 
 This frame was rendered with engine version 0.9.
 
@@ -30,6 +30,7 @@ A lot of this is also covered in the "3D Graphics Rendering Cookbook" and "OpenG
 The first thing the renderer does is to do a check over entities and lights marked "dynamic" to see if any of them have changed within the last frame or if new ones have been added. The reason this is done is for two reasons:
 
 1) If no entities have been changed or added, previous render queues may be entirely valid for this new frame and can be reused.
+
 2) If a light has not moved or had an entity move near it, its shadow map data from the previous frame can be reused.
 
 Anything marked as static is skipped during this step to save on performance.
@@ -40,15 +41,28 @@ Next up is a check to see if the application code has requested a shader recompi
 
 This capability was added very early in development since having it saved tons of time. A lot of shader effects were written and debugged while the engine was running.
 
+# GPU View Frustum Culling & Mesh LOD Selection
+
+![aabbs](/assets/aabbs.PNG)
+(Visual of the scene's Axis-Aligned Bounding Boxes (AABBs))
+
+The CPU then dispatches a compute shader which is responsible for culling draw commands by performing a visibility test of its Axis-Aligned Bounding Box (AABB) against the view frustum.
+
+If a command passes the view frustum test meaning the mesh it represents is at least partially inside the frustum, the compute shader then checks to see how far away in view space that mesh is. Based on the distance it decides which LOD should be used, and finally writes the command to a GPU draw command buffer.
+
+If a command fails the view frustum test meaning it's fully outside at least one of the frustum planes, the GPU marks that command as unnecessary by setting its instance count parameter to 0.
+
+This is a demonstration of how rendering queues backed by GPU draw command buffers enable the GPU to generate its own work. It's able to take the global rendering queues and create a new rendering queue with only the draw commands that represent mesh geometry that is inside the view frustum.
+
 # Shadow Map Cache and Updates
 
-Point lights and virtual point lights pull from their own shadow map caches. Regular point lights use a higher resolution shadow map pool (384x384 or 512x512 both seem to work well), while virtual point lights use a much larger but also much lower resolution shadow map pool.
+Point lights and virtual point lights pull from their own shadow map caches. Regular point lights use a higher resolution shadow map pool (256x256 and 512x512 both seem to work well), while virtual point lights use a much larger but also much lower resolution shadow map pool.
 
 For each light active nearby the camera, the renderer checks to see if its shadow map is already in the cache and the light hasn't been marked as invalid. If so its shadow map data is reused. If not then its shadow map has to be regenerated.
 
 To save on performance, no more than 3 shadow map updates are performed per frame. Each light is entered into a light update queue to prevent any light from being neglected for too many frames.
 
-After the point lights, cascaded shadow maps are regenerated for the directional light (if enabled).
+After the point lights, cascaded shadow maps are regenerated for the directional light (if enabled). Each of the four cascades are given the scene at different levels of details. The first cascade uses the highest level of detail while the last cascade uses the lowest available level of detail. This is done to save on performance while still giving accurate shadows at a close range.
 
 ![CSM](/assets/cascades0_3.PNG)
 
@@ -61,6 +75,8 @@ Now the GBuffer is generated so that it can be used with the deferred lighting a
 1) World space position texture
 
 2) World space normal texture (converted from tangent space -> world space)
+
+(It was pointed out to me that both position and normal can be handled much more efficiently. See here: [https://aras-p.info/texts/CompactNormalStorage.html](https://aras-p.info/texts/CompactNormalStorage.html))
 
 3) Albedo texture
 
@@ -86,7 +102,7 @@ This buffer is very useful for various post-processing effects.
 
 The current PBR implementation for this engine is based on the PBR paper released by Google's Filament team. This can be found here: [https://google.github.io/filament/Filament.md.html](https://google.github.io/filament/Filament.md.html).
 
-Right now I’m only using the standard model single scattering bidirectional reflectance distribution function (BRDF) so it will unfortunately lose energy at high roughness values. The diffuse term is using the Disney model since I liked the results a bit better even though it cost a tiny bit of performance. Google’s Filament heavily targets mobile so they found it to be not worth the extra computation, but since I’m only running on desktop I think it’s ok for StratusGFX.
+Right now the standard model single scattering bidirectional reflectance distribution function (BRDF) is used by the engine so it will unfortunately lose energy at high roughness values. The diffuse term is using the Disney model since I liked the results a bit better even though it cost a tiny bit of performance. Google’s Filament heavily targets mobile so they found it to be not worth the extra computation, but since Stratus is only meant to run on desktop it should be ok in this situation.
 
 # Global Illumination
 
@@ -177,7 +193,7 @@ During the post processing step the following take place:
 I will likely continue working on this rendering engine to some extent so that I can keep researching and learning about graphics programming. These are the areas I am strongly interested in going forward:
 
 * Porting the renderer to Vulkan
-* Switching to a global illumination approach based on either voxel cone tracing or ray tracing signed distance fields (or maybe something else? I am not sure yet)
+* Switching to a global illumination approach based on either voxel cone tracing or ray traced signed distance fields (or maybe another approach? I am not sure yet)
 * High-quality anti aliasing even while the camera is moving using Temporal Super Sampling Anti-Aliasing (TSSAA) which was showcased in Doom 2016
 
 # Helpful Resources and References
