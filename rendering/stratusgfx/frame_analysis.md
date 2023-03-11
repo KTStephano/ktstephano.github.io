@@ -5,7 +5,7 @@ permalink: /rendering/stratusgfx/frame_analysis
 ![Sponza in StratusGFX](/assets/Sponza2022_2_1.png)
 *(rendered with StratusGFX - model is Intel Sponza 2022)*
 
-This article will breakdown a lot of the high level technical details of how StratusGFX renders a single frame. A video tech demo can be found here: [https://www.youtube.com/watch?v=JSGBiP6RbN0](https://www.youtube.com/watch?v=JSGBiP6RbN0).
+This article will breakdown a lot of the high level technical details of how StratusGFX renders a single frame. A video tech demo can be found here: [https://youtu.be/s5aIsgzwNPE](https://youtu.be/s5aIsgzwNPE).
 
 StratusGFX is a realtime rendering engine I wrote in order to learn about modern graphics programming techniques. Development and testing was done on Windows 10 running with a Ryzen 5 1600 and an Nvidia GTX 1060. The target frame rate was a minimum of 30 fps (33.33 msec), but most of the scenes in the tech demo ran at 60 fps (16.67 msec) a majority of the time.
 
