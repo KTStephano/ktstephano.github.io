@@ -29,7 +29,8 @@ There are multiple different ways to store the bounding box information. This ar
 {% highlight c++ %}
 struct AABB {
     // If doing GPU frustum culling be careful of alignment. For example,
-    // using GLSL it would be best to store these both as vec4.
+    // using GLSL it would be best to store these both as vec4 or an
+    // array of 3 floats each.
     glm::vec3 vmin;
     glm::vec3 vmax;
 };
