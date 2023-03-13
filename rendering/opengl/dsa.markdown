@@ -5,7 +5,7 @@ layout: default
 
 This is part of a tutorial series teaching advanced modern OpenGL. To use all features to their fullest you will need to target OpenGL 4.6. These articles assume you have familiarity with OpenGL 3.3.
 
-Modern OpenGL is all about improving performance and making the API much easier to use compared to older versions. This article is going to cover the first and simplest addition to the modern API: Direct State Access (DSA).
+Modern OpenGL is all about improving performance and making the API much easier to use compared to older versions. This article is going to cover the simplest addition to the modern API: Direct State Access (DSA).
 
 ## What is Direct State Access (DSA)?
 
