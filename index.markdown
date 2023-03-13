@@ -18,7 +18,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 
 * [Direct State Access (DSA)](/rendering/opengl/dsa)
 * [Shader Storage Buffer Objects (SSBOs)](/rendering/opengl/ssbos)
-* [(Under Construction) Programmable Vertex Pulling]
-* [(Under Construction) Bindless Textures]
-* [(Under Construction) Compute Shaders]
-* [(Under Construction) Multi-Draw Indirect (Draw Commands/Render Queues)]
+* [Under Construction] Programmable Vertex Pulling
+* [Under Construction] Bindless Textures
+* [Under Construction] Compute Shaders
+* [Under Construction] Multi-Draw Indirect (Draw Commands/Render Queues)
