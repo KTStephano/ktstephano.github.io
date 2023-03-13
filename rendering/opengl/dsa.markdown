@@ -99,7 +99,7 @@ glNamedBufferStorage(buffer,
                      GL_DYNAMIC_STORAGE_BIT);
 {% endhighlight %}
 
-There are also other parts of the API that have received new DSA variants of older functions. Below are a few function prototypes from the OpenGL spec.
+There are also other parts of the API that have received new DSA variants of older functions. Below are a few more examples to show the DSA pattern.
 
 ### **Old:**
 {% highlight c++ %}
