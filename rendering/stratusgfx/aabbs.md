@@ -43,7 +43,7 @@ AABB CreateBoundingBox(const std::vector<glm::vec3>& vertices) {
 
     // Start looping from vertex 1 onwards
     for (size_t i = 1; i < vertices.size(); ++i) {
-        const glm::vec3 current = vertices[i];
+        const glm::vec3& current = vertices[i];
         vmin = glm::min(vmin, current);
         vmax = glm::max(vmax, current);
     }
@@ -105,7 +105,7 @@ AABB RecomputeBoundingBox(const AABB& old, const glm::mat4& transform) {
 
     // Start looping from corner 1 onwards
     for (size_t i = 1; i < 8; ++i) {
-        const glm::vec3 current = corners[i];
+        const glm::vec3& current = corners[i];
         newVmin = glm::min(newVmin, current);
         newVmax = glm::max(newVmax, current);
     }
