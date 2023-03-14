@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/stratusgfx/frame_analysis
+layout: post
 ---
 
 ![Sponza in StratusGFX](/assets/Sponza2022_2_1.png)
