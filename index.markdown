@@ -19,7 +19,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 * [Direct State Access (DSA)](/rendering/opengl/dsa)
 * [Shader Storage Buffer Objects (SSBOs)](/rendering/opengl/ssbos)
 * [Programmable Vertex Pulling](/rendering/opengl/prog_vtx_pulling)
-* [Under Construction] Bindless Textures
+* [Bindless Textures](/rendering/opengl/bindless)
 * [Under Construction] Multi-Draw Indirect (Draw Commands/Render Queues)
 * [Under Construction] Compute Shaders for General Purpose GPU (GPGPU) Programming
 * [Under Construction] Loading SPIR-V Shaders With OpenGL

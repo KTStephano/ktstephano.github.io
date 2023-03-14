@@ -128,7 +128,8 @@ glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
 glUseProgram(0);
 
-// No need to unbind vertexDataBuffer
+// Uncomment if you want to explicitly unbind the resouce
+//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 {% endhighlight %}
 
 Inside of the vertex shader we will be making use of a built-in input called `gl_VertexID`. When using non-indexed drawing such as `glDrawArrays`, gl_VertexID will be equal to the current vertex index. When using indexed drawing such as `glDrawElements`, gl_VertexID will be equal to the current index from the element array buffer.

@@ -4,6 +4,7 @@
 
 permalink: /portfolio
 title: Portfolio
+layout: home
 
 ---
 

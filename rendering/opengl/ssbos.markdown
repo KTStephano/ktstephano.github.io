@@ -13,6 +13,7 @@ When writing graphics code that uses OpenGL, eventually we reach a stage where w
 2. Shader storage buffers can be much larger than uniform storage buffers, in practice up to the total size of all available GPU memory can be allocated for use.
 3. Shader storage buffers have access to the std430 layout in GLSL which is an improvement over the old std140 layout.
 4. Inside of a shader written in GLSL, an SSBO can be specified with variable length instead of having to know ahead of time what the size will be.
+5. The spec warns that speed of accessing data in an SSBO may be lower than for a uniform buffer.
 
 ## Creating and using a Shader Storage Buffer
 
@@ -163,11 +164,14 @@ glDrawArraysInstanced(
 
 glBindVertexArray(0);
 glUseProgram(0);
+
+// Uncomment if you want to explicitly unbind the resouce
+//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, 0);
 {% endhighlight %}
 
 ## Unbinding? Using with multiple shaders?
 
-There is no need to unbind a shader storage buffer after calling bind buffer base. You can overwrite the existing binding at any point by calling the function again with the same binding index but with a different shader storage buffer object.
+There is often not a need to explicitly unbind a buffer after using `glBindBufferBase`. You can overwrite the existing binding at any point by calling the function again with the same binding index but with a different shader storage buffer object.
 
 If you want the same shader storage buffer to be used by multiple shaders, simply specify the exact same shader storage binding in each of those shaders. Then you can call glBindBufferBase once with the index and proceed to use it with multiple shader programs in a row.
 
