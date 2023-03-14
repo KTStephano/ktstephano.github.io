@@ -22,3 +22,4 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 * [Under Construction] Bindless Textures
 * [Under Construction] Compute Shaders for General Purpose GPU (GPGPU) Programming
 * [Under Construction] Multi-Draw Indirect (Draw Commands/Render Queues)
+* [Under Construction] Loading SPIR-V Shaders With OpenGL
