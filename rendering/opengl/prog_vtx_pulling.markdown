@@ -100,7 +100,7 @@ The advantage of this is that we get OpenGL out of the way when it comes to inte
 // We use arrays of floats since they will be tightly packed with the
 // layout std430 qualifier
 struct VertexData {
-    float vertex[3];
+    float position[3];
     float uv[2];
     float normal[3];
 };
@@ -156,9 +156,9 @@ uniform mat4 view;
 // Helper functions to manually unpack the data into vectors given an index
 vec3 getPosition(int index) {
     return vec3(
-        data[index].vertex[0], 
-        data[index].vertex[1], 
-        data[index].vertex[2]
+        data[index].position[0], 
+        data[index].position[1], 
+        data[index].position[2]
     );
 }
 
