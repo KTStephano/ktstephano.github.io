@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/opengl/ssbos
+title: Test
 ---
 
 ![ogl](/assets/opengl.png)
