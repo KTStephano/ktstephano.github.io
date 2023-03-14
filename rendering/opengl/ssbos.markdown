@@ -174,7 +174,7 @@ If you want the same shader storage buffer to be used by multiple shaders, simpl
 
 ## Can SSBOs be used to store vertex, uv, and normal data?
 
-Yes! This will be covered in a future article talking about programmable vertex pulling which will completely remove the need for vertex array objects and vertex buffer objects.
+Yes! See the [Programmable Vertex Pulling](/rendering/opengl/prog_vtx_pulling) tutorial showing how to do this.
 
 ## Future articles
 
