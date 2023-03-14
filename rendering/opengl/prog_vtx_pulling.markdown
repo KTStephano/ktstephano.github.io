@@ -91,7 +91,9 @@ void main()
 
 ## New Method - Programmable Vertex Pulling with SSBOs
 
-This will work for both indexed and non-indexed drawing and can be extended to further support multi-draw indirect commands.
+This will work for both indexed and non-indexed drawing and can be extended to further support multi-draw indirect commands. In the above example we put all the data into a vector of floats, then sent it to an OpenGL array buffer and told OpenGL how it was supposed to interpret the data and which locations it was supposed to send it to. With programmable vertex pulling we do away with that and instead manually unpack our data in the shader. 
+
+The advantage of this is that we get OpenGL out of the way when it comes to interpreting our data and instead write the code to deal with our data directly a lot like we would do with C++, but now in GLSL. This offers us a lot of flexibility both with vertex data but other with other data that will be discussed in future tutorials.
 
 *main.cpp*
 {% highlight c++ %}
