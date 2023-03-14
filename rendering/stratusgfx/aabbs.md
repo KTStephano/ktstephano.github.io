@@ -1,6 +1,5 @@
 ---
 permalink: /rendering/stratusgfx/aabbs
-layout: post
 ---
 
 Recently I was able to implement view frustum culling on both the CPU and GPU for the StratusGFX rendering engine. In this article I will walk through the process of generating and incrementally updating Axis-Aligned Bounding Boxes (AABBs) from a mesh and then extracting the view frustum planes in world space to check the AABBs against them.

@@ -1,6 +1,5 @@
 ---
 permalink: /rendering/opengl/prog_vtx_pulling
-layout: post
 ---
 
 ![ogl](/assets/opengl.png)

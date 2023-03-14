@@ -67,4 +67,4 @@ utterances:
   issue-term:          "url"
   label:               "Comments"
   theme:               "github-light"
-  #crossorigin:         "anonymous"
+  crossorigin:         "anonymous"

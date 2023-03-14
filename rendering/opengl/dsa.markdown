@@ -1,6 +1,5 @@
 ---
 permalink: /rendering/opengl/dsa
-layout: post
 ---
 
 ![ogl](/assets/opengl.png)
