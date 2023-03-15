@@ -333,6 +333,9 @@ Bindless textures are a very powerful tool to increase the number of textures th
 
 The main downsides relate to a) not being core in GL 4.6, b) not all graphics debuggers supporting it, and c) outside of Nvidia and AMD which have strong support for bindless, not all vendors (especially mobile) will support them.
 
+## Learn OpenGL Fundamentals
+* [https://learnopengl.com](https://learnopengl.com)
+
 ## References
 
 * [https://www.khronos.org/opengl/wiki/Bindless_Texture](https://www.khronos.org/opengl/wiki/Bindless_Texture)
