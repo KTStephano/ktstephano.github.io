@@ -11,4 +11,5 @@ The purpose of this page is to collect other resources which are extremely helpf
 ## 3rd Party Resources
 * [https://github.com/fendevel/Guide-to-Modern-OpenGL-Functions](https://github.com/fendevel/Guide-to-Modern-OpenGL-Functions)
 * [3D Graphics Rendering Cookbook](https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1838986197)
+* [https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [https://juandiegomontoya.github.io/modern_opengl.html](https://juandiegomontoya.github.io/modern_opengl.html)
