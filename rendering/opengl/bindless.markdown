@@ -54,7 +54,7 @@ Since we won't be binding to uniform texture units anymore, we need to be able t
 
 Once you make a texture handle resident, it remains resident until you explicitly tell the driver to make it non-resident. This means that if you have a certain group of textures that will be around for the entire lifetime of your program, you could make them resident at the start and then leave them resident until the program is ending.
 
-**Making Texture Handles Resident**
+**Making Texture Handles Non-Resident**
 {% highlight c++ %}
 // handle is what is returned by glGetTextureHandleARB
 void glMakeTextureHandleNonResidentARB(GLuint64 handle​);
