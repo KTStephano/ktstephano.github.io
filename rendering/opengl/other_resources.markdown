@@ -13,3 +13,5 @@ The purpose of this page is to collect other resources which are extremely helpf
 * [3D Graphics Rendering Cookbook](https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1838986197)
 * [https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [https://juandiegomontoya.github.io/modern_opengl.html](https://juandiegomontoya.github.io/modern_opengl.html)
+* [https://medium.com/@daniel.coady/compute-shaders-in-opengl-4-3-d1c741998c03](https://medium.com/@daniel.coady/compute-shaders-in-opengl-4-3-d1c741998c03)
+* [https://learnopengl.com/Guest-Articles/2022/Compute-Shaders/Introduction](https://learnopengl.com/Guest-Articles/2022/Compute-Shaders/Introduction)
