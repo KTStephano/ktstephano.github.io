@@ -20,7 +20,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 * [Shader Storage Buffer Objects (SSBOs)](/rendering/opengl/ssbos)
 * [Programmable Vertex Pulling](/rendering/opengl/prog_vtx_pulling)
 * [Bindless Textures](/rendering/opengl/bindless)
-* [Multi-Draw Indirect (Draw Commands/Render Queues)](/rendering/opengl/mdi)
+* [Multi-Draw Indirect (MDI)](/rendering/opengl/mdi)
 * [Under Construction] Compute Shaders for General Purpose GPU (GPGPU) Programming
 * [Under Construction] Loading SPIR-V Shaders With OpenGL
 * [Other Modern OpenGL Resources](/rendering/opengl/other_resources)
