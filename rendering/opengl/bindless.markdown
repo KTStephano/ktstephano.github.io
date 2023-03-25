@@ -327,6 +327,49 @@ Running this program produces the following result on a GTX 1060:
 
 ![bindless](/assets/bindless.PNG)
 
+## Note About Dynamically Uniform Expressions
+
+For information on what dynamically uniform expressions are, see [https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)#Dynamically_uniform_expression](https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)#Dynamically_uniform_expression).
+
+In the above shader we are pulling the texture using the value inside of `flat in int fsInstance;`. Since we are drawing multiple instances with the same draw command, this will **not** be a dynamically uniform expression. Certain hardware supports this, for example the GTX 1060 I used supports it with no other extensions needed except bindless.
+
+But on other hardware this could cause major issues since the code path leading to the texture access needs to be dynamically uniform. There are two main workarounds:
+
+1) Switch to Multi-Draw Indirect (MDI) and make use of `gl_DrawID` which is guaranteed to be dynaically uniform. With this setup instead of having multiple instances of the cube, you would record 1600 draw commands so that `gl_DrawID` is set to a value of [0, 1600) depending on which command is being executed.
+
+
+2) Add other extensions on top of bindless. For Nvidia (if required) you can add `#extension GL_NV_gpu_shader5 : require`. On AMD (if required) you can add `#extension GL_EXT_nonuniform_qualifier : require`.
+
+(Special thanks to Jake Ryan over at [https://juandiegomontoya.github.io/modern_opengl.html](https://juandiegomontoya.github.io/modern_opengl.html) for pointing this out)
+
+## uvec2 To sampler
+
+For an example of this, see this shader: [https://github.com/JuanDiegoMontoya/GLest-Rendererer/blob/main/glRenderer/Resources/Shaders/gBufferBindless.fs](https://github.com/JuanDiegoMontoya/GLest-Rendererer/blob/main/glRenderer/Resources/Shaders/gBufferBindless.fs)
+
+After making a 64-bit texture handle resident, it is possible to pass in that texture as an array of uvec2 instead of an explicit sampler2D. As a short example modified from the link above:
+
+{% highlight glsl %}
+#version 460 core
+#extension GL_ARB_bindless_texture : enable
+
+layout (location = 1) uniform uvec2 albedoHandle;
+
+layout (location = 2) in vec2 fsTexCoord;
+
+void main() {
+    const bool hasAlbedo = (albedoHandle.x != 0 || albedoHandle.y != 0);
+    vec4 color = vec4(0.1, 0.1, 0.1, 1);
+    if (hasAlbedo) {
+        // Notice the cast to sampler2D from the uvec2 handle
+        color = texture(sampler2D(albedoHandle, fsTexCoord)).rgba;
+    }
+
+    ... rest of shader ...
+}
+{% endhighlight %}
+
+(Special thanks to Jake Ryan over at [https://juandiegomontoya.github.io/modern_opengl.html](https://juandiegomontoya.github.io/modern_opengl.html) for suggesting this example)
+
 ## Conclusion
 
 Bindless textures are a very powerful tool to increase the number of textures that a shader can access. It supplements the old methods of using texture arrays or texture atlases, and for programs that spend large amounts of time binding/unbinding textures between draw calls it can offer a lot of performance improvements.
@@ -340,3 +383,9 @@ The main downsides relate to a) not being core in GL 4.6, b) not all graphics de
 
 * [https://www.khronos.org/opengl/wiki/Bindless_Texture](https://www.khronos.org/opengl/wiki/Bindless_Texture)
 * [OpenGL SuperBible](https://www.amazon.com/OpenGL-Superbible-Comprehensive-Tutorial-Reference/dp/0672337479)
+* [https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)#Dynamically_uniform_expression](https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)#Dynamically_uniform_expression)
+* [https://stackoverflow.com/questions/40875564/opengl-bindless-textures-bind-to-uniform-sampler2d-array](https://stackoverflow.com/questions/40875564/opengl-bindless-textures-bind-to-uniform-sampler2d-array)
+* [https://community.khronos.org/t/how-to-implement-bindless-textures-efficiently/76109/2](https://community.khronos.org/t/how-to-implement-bindless-textures-efficiently/76109/2)
+* [https://juandiegomontoya.github.io/modern_opengl.html](https://juandiegomontoya.github.io/modern_opengl.html)
+* [https://registry.khronos.org/OpenGL/extensions/NV/NV_gpu_shader5.txt](https://registry.khronos.org/OpenGL/extensions/NV/NV_gpu_shader5.txt)
+* [https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GL_EXT_nonuniform_qualifier.txt](https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GL_EXT_nonuniform_qualifier.txt)
