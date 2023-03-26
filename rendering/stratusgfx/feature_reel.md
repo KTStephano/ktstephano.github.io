@@ -2,7 +2,7 @@
 permalink: /rendering/stratusgfx/feature_reel
 ---
 
-This page contains screenshots of the main features available with the StratusGFX rendering engine.
+This page contains screenshots captured in realtime on an Nvidia GTX 1060 using the StratusGFX rendering engine.
 
 ## Realtime Global Illumination + Indirect Shadowing
 Accomplished using virtual point lights.
