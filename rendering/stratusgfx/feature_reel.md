@@ -52,7 +52,7 @@ Maps HDR color values to [0, 1] range before applying gamma correction.
 ![aces](/assets/portfolio/bathroom_aces2.png)
 
 ## Bloom
-Accomplished with repeated downsampling of bright spots followed by repeated upsampling and combining with main image.
+Accomplished with repeated downsampling of bright spots followed by repeated upsampling and combining with the main image.
 
 ![bloom](/assets/portfolio/Bloom.png)
 
