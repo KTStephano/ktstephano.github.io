@@ -8,13 +8,19 @@ layout: home
 
 ---
 
-<iframe width="600" height="350" src="https://www.youtube.com/embed/s5aIsgzwNPE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+![sponza](/assets/portfolio/Sponza2022_gi_2.png)
 
 # StratusGFX
 
-StratusGFX is a 3D rendering engine written in C++17 using OpenGL 4.6.
+StratusGFX is a realtime 3D rendering engine.
 
-[Click here to read a technical breakdown of a single frame.](/rendering/stratusgfx/frame_analysis)
+-> [Feature Reel](/rendering/stratusgfx/feature_reel)
+
+-> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis)
+
+Built Using:
+* C++17
+* OpenGL 4.6
 
 Graphics features currently supported:
 * Physically based metallic-roughness pipeline

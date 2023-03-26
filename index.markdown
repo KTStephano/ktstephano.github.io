@@ -9,9 +9,11 @@ title: Articles
 
 In this space I'll be posting things related to game engines, graphics and GPGPU programming. The topics will be grouped roughly by section to make it easier to find information.
 
-### StratusGFX Rendering Engine
+### StratusGFX
 
 * [How A Frame Is Rendered](/rendering/stratusgfx/frame_analysis)
+
+### Math
 * [View Frustum Culling Using Axis-Aligned Bounding Boxes (AABBs)](/rendering/stratusgfx/aabbs.md)
 
 ### Advanced Modern OpenGL
