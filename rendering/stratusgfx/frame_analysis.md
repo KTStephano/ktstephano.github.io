@@ -74,13 +74,13 @@ Now the GBuffer is generated so that it can be used with the deferred lighting a
 
 1) 16-bit World space normal texture (converted from tangent space -> world space)
 
-(It was pointed out to me that normal can be handled much more efficiently. See here: [https://aras-p.info/texts/CompactNormalStorage.html](https://aras-p.info/texts/CompactNormalStorage.html))
+(It was pointed out to me that GBuffer normals can be handled more efficiently. See here: [https://aras-p.info/texts/CompactNormalStorage.html](https://aras-p.info/texts/CompactNormalStorage.html))
 
 2) 8-bit Albedo texture
 
-3) 16-bit Base Reflectivity texture
+3) 8-bit Base Reflectivity texture
 
-4) 16-bit Roughness-Metallic-Ambient texture
+4) 8-bit Roughness-Metallic-Ambient texture
 
 5) 16-bit Structure buffer
 
