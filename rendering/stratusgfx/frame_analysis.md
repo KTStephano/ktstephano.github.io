@@ -70,21 +70,19 @@ After the point lights, cascaded shadow maps are regenerated for the directional
 
 # GBuffer (Geometry Buffer) Generation
 
-Now the GBuffer is generated so that it can be used with the deferred lighting and post processing passes. These are the following textures that are part of the GBuffer for this implementation:
+Now the GBuffer is generated so that it can be used with the deferred lighting and post processing passes. World space positions are reconstructed from the depth value so an explicit world space texture is not used. These are the following textures that are part of the GBuffer for this implementation:
 
-1) World space position texture
+1) 16-bit World space normal texture (converted from tangent space -> world space)
 
-2) World space normal texture (converted from tangent space -> world space)
+(It was pointed out to me that normal can be handled much more efficiently. See here: [https://aras-p.info/texts/CompactNormalStorage.html](https://aras-p.info/texts/CompactNormalStorage.html))
 
-(It was pointed out to me that both position and normal can be handled much more efficiently. See here: [https://aras-p.info/texts/CompactNormalStorage.html](https://aras-p.info/texts/CompactNormalStorage.html))
+2) 8-bit Albedo texture
 
-3) Albedo texture
+3) 16-bit Base Reflectivity texture
 
-4) Base Reflectivity texture
+4) 16-bit Roughness-Metallic-Ambient texture
 
-5) Roughness-Metallic-Ambient texture
-
-6) Structure buffer
+5) 16-bit Structure buffer
 
 ![gstructure](/assets/gstructure.png)
 (Structure buffer)
