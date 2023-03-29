@@ -11,6 +11,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 
 ### StratusGFX
 
+* [High Level Architecture Overview](/rendering/stratusgfx/architecture)
 * [How A Frame Is Rendered](/rendering/stratusgfx/frame_analysis)
 
 ### Math
