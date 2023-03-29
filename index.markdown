@@ -15,6 +15,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 * [How A Frame Is Rendered](/rendering/stratusgfx/frame_analysis)
 
 ### Math
+
 * [View Frustum Culling Using Axis-Aligned Bounding Boxes (AABBs)](/rendering/stratusgfx/aabbs.md)
 
 ### Advanced Modern OpenGL
