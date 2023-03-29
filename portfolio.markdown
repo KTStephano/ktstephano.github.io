@@ -16,6 +16,8 @@ StratusGFX is a realtime 3D rendering engine.
 
 -> [Feature Reel](/rendering/stratusgfx/feature_reel)
 
+-> [GitHub Repo](https://github.com/KTStephano/StratusGFX)
+
 -> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis)
 
 Built Using:
