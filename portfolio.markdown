@@ -38,6 +38,13 @@ Graphics features currently supported:
 * Bloom
 * Fast Approximate Anti-Aliasing (FXAA)
 
+Engine features:
+* Pool allocators
+* Multi threaded utilities
+* Concurrent hash map
+* Entity-Component System (ECS)
+* Logging
+
 Modern graphics API features used:
 * Compute shaders
 * Direct state access
