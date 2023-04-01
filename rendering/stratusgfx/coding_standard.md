@@ -41,4 +41,4 @@ int privateMemberVariable_;
 
 -> Usage of C++ standard containers and algorithms is preferred whenever possible since they are well-tested and have generally good performance
 
--> `assert` and `static_assert` are very helpful to help us prevent errors by making changes or using the code incorrectly
+-> `assert` and `static_assert` are great to prevent us from making a change that breaks a fundamental requirement
