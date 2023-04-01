@@ -14,9 +14,11 @@ layout: home
 
 StratusGFX is a realtime 3D rendering engine.
 
--> [Feature Reel](/rendering/stratusgfx/feature_reel)
+-> [Graphics Feature Reel](/rendering/stratusgfx/feature_reel)
 
 -> [GitHub Repo](https://github.com/KTStephano/StratusGFX)
+
+-> [Video Tech Demo](https://www.youtube.com/watch?v=s5aIsgzwNPE)
 
 -> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis)
 
