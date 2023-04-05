@@ -183,8 +183,23 @@ During the post processing step the following take place:
 
 * Volumetric information is combined with direct/indirect lighting
 * A bloom filter is applied which is based on the Call of Duty: Advanced Warfare presentation: [http://www.iryoku.com/next-generation-post-processing-in-call-of-duty-advanced-warfare](http://www.iryoku.com/next-generation-post-processing-in-call-of-duty-advanced-warfare)
-* Fast Approximate Anti-Aliasing (FXAA) is used to reduce aliasing to some extent (information found here: [https://catlikecoding.com/unity/tutorials/custom-srp/fxaa/](https://catlikecoding.com/unity/tutorials/custom-srp/fxaa/))
 * Tone mapping is applied to map HDR values to LDR values using ACES Filmic Tonepping described here: [https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/](https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/)
+
+# Fast Approximate Anti-Aliasing (FXAA)
+
+After tonemapping and gamma correction, FXAA is applied. This is done using a non-linear series of steps to identify edges and apply blurring. A final guess step is taken if the end of the edge was not found within 10 steps. For more information see [https://catlikecoding.com/unity/tutorials/custom-srp/fxaa/](https://catlikecoding.com/unity/tutorials/custom-srp/fxaa/).
+
+# Temporal Anti-Aliasing (TAA) -> New in engine version 0.10 (experimental, in development)
+
+TAA is used as a supplement to FXAA. This has a lot of benefits as far as reducing aliasing and flickering while the scene is changing which FXAA by itself struggles with. In order to achieve this without creating an overly blurry image even when standing still, FXAA is always applied but TAA is only applied while either the camera moves (per pixel) or an object moves (per object) or both.
+
+If desired TAA can also be applied while everything in the scene is motionless by enabling per-vertex jitter.
+
+For more information see the following articles:
+* [https://sugulee.wordpress.com/2021/06/21/temporal-anti-aliasingtaa-tutorial/](https://sugulee.wordpress.com/2021/06/21/temporal-anti-aliasingtaa-tutorial/)
+* [https://ziyadbarakat.wordpress.com/2020/07/28/temporal-anti-aliasing-step-by-step/](https://ziyadbarakat.wordpress.com/2020/07/28/temporal-anti-aliasing-step-by-step/)
+* [https://www.elopezr.com/temporal-aa-and-the-quest-for-the-holy-trail/](https://www.elopezr.com/temporal-aa-and-the-quest-for-the-holy-trail/)
+* [http://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/](http://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/)
 
 # Future of StratusGFX
 

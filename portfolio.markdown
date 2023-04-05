@@ -39,6 +39,7 @@ Graphics features currently supported:
 * Fog
 * Bloom
 * Fast Approximate Anti-Aliasing (FXAA)
+* Temporal Anti-Aliasing (TAA)
 
 Engine features:
 * Pool allocators
