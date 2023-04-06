@@ -191,15 +191,16 @@ After tonemapping and gamma correction, FXAA is applied. This is done using a no
 
 # Temporal Anti-Aliasing (TAA) -> New in engine version 0.10 (experimental, in development)
 
-TAA is used as a supplement to FXAA. This has a lot of benefits as far as reducing aliasing and flickering while the scene is changing which FXAA by itself struggles with. In order to achieve this without creating an overly blurry image even when standing still, FXAA is always applied but TAA is only applied while either the camera moves (per pixel) or an object moves (per object) or both.
+TAA is used to supplement FXAA since it can help stabilize the scene while in motion. It is applied at the beginning of the post processing pass so that it can help reduce flickering with things like bloom.
 
-If desired TAA can also be applied while everything in the scene is motionless by enabling per-vertex jitter.
+To accomplish this a very slight subpixel jitter is added using numbers from the base 2, base 3 Halton sequence. Per pixel and per object velocity is taken into account when the camera or an object moves. Basic color clamping helps reduce ghosting artifacts.
 
 For more information see the following articles:
 * [https://sugulee.wordpress.com/2021/06/21/temporal-anti-aliasingtaa-tutorial/](https://sugulee.wordpress.com/2021/06/21/temporal-anti-aliasingtaa-tutorial/)
 * [https://ziyadbarakat.wordpress.com/2020/07/28/temporal-anti-aliasing-step-by-step/](https://ziyadbarakat.wordpress.com/2020/07/28/temporal-anti-aliasing-step-by-step/)
 * [https://www.elopezr.com/temporal-aa-and-the-quest-for-the-holy-trail/](https://www.elopezr.com/temporal-aa-and-the-quest-for-the-holy-trail/)
 * [http://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/](http://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/)
+* [https://de45xmedrsdbp.cloudfront.net/Resources/files/TemporalAA_small-59732822.pdf](https://de45xmedrsdbp.cloudfront.net/Resources/files/TemporalAA_small-59732822.pdf)
 
 # Future of StratusGFX
 
