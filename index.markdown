@@ -14,6 +14,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 * [High Level Architecture Overview](/rendering/stratusgfx/architecture)
 * [How A Frame Is Rendered](/rendering/stratusgfx/frame_analysis)
 * [Coding Standard Used For StratusGFX](/rendering/stratusgfx/coding_stanard)
+* [Automatic LOD Generation and Selection](/rendering/stratusgfx/lod)
 
 ### Math
 
