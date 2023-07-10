@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/opengl/prog_vtx_pulling
+title: Programmable Vertex Pulling
 ---
 
 ![ogl](/assets/opengl.png)

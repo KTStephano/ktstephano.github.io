@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/opengl/ssbos
+title: Shader Storage Buffer Objects (SSBOs)
 ---
 
 ![ogl](/assets/opengl.png)

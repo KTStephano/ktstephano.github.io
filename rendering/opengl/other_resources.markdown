@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/opengl/other_resources
+title: Other Modern OpenGL Resources
 ---
 
 The purpose of this page is to collect other resources which are extremely helpful for making use of everything OpenGL 4.x has to offer. If you have any suggestions please leave a comment with the link and they can be added here!

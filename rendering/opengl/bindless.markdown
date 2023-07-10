@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/opengl/bindless
+title: Bindless Textures
 ---
 
 ![ogl](/assets/opengl.png)

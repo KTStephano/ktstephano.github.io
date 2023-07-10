@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/opengl/mdi
+title: Multi-Draw Indirect (MDI)
 ---
 
 ![ogl](/assets/opengl.png)

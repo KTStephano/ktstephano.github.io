@@ -1,5 +1,6 @@
 ---
 permalink: /rendering/opengl/dsa
+title: Direct State Access (DSA)
 ---
 
 ![ogl](/assets/opengl.png)
