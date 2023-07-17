@@ -19,7 +19,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 * [Other Modern OpenGL Resources](/rendering/opengl/other_resources)
 
 ### Graphics Engine Devlogs
-
+* [Engine Version 0.10 - Technical Frame Analysis](/rendering/stratusgfx/frame_analysis_v0_10)
 * [View Frustum Culling Using Axis-Aligned Bounding Boxes (AABBs)](/rendering/stratusgfx/aabbs.md)
 * [High Level Architecture Overview](/rendering/stratusgfx/architecture)
 * [How A Frame Is Rendered](/rendering/stratusgfx/frame_analysis)
