@@ -48,7 +48,7 @@ This capability was added very early in development and having it saved tons of 
 
 # GPU View Frustum Culling & Mesh LOD Selection
 
-![aabbs](/assets/v0.10/aabbs.PNG)
+![aabbs](/assets/v0.10/aabbs.png)
 (Visual of the scene's submeshes by overlying their AABBs onto the scene)
 
 The CPU then dispatches a compute shader which is responsible for culling draw commands by performing a visibility test of its Axis-Aligned Bounding Box (AABB) against the view frustum.
@@ -59,7 +59,7 @@ If a command fails the view frustum test meaning it's fully outside at least one
 
 # Cascaded Shadow Maps (CSMs)
 
-![CSM](/assets/v0.10/Cascades.PNG)
+![CSM](/assets/v0.10/Cascades.png)
 
 (Shadow map cascades 1 (top left), 2 (top right), 3 (bottom left), 4 (bottom right))
 
