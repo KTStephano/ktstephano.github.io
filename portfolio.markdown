@@ -20,7 +20,7 @@ StratusGFX is a realtime 3D rendering engine.
 
 -> [Video Tech Demo](https://www.youtube.com/watch?v=s5aIsgzwNPE)
 
--> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis)
+-> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis_v0_10)
 
 Built Using:
 * C++17
