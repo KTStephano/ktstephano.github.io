@@ -8,11 +8,21 @@ layout: home
 
 ---
 
-![sponza](/assets/portfolio/Sponza2022_gi_2.png)
+# StratusGFX Realtime Graphics Engine
 
-# StratusGFX
+![sponza](/assets/v0.10/SponzaGI_Front.png)
 
-StratusGFX is a realtime 3D rendering engine.
+(3D Model: Intel Sponza)
+
+![sanmiguel](/assets/v0.10/FinalAfterPostProcessing.png)
+
+(3D Model: San Miguel)
+
+![cornell_front](/assets/v0.10/Cornell_Front.png)
+
+![cornell_back](/assets/v0.10/Cornell_Back.png)
+
+(3D Model: Cornell Box)
 
 -> [Graphics Feature Reel](/rendering/stratusgfx/feature_reel)
 
@@ -29,13 +39,14 @@ Built Using:
 Graphics features currently supported:
 * Physically based metallic-roughness pipeline
 * Realtime global illumination
+* Spatiotemporal image denoising
 * Raymarched volumetric lighting and shadowing
 * Cascaded shadow mapping
 * Deferred lighting
 * Mesh LOD generation and selection
 * GPU Frustum Culling
 * Screen Space Ambient Occlusion (SSAO)
-* Filmic tonemapping
+* Reinhard or ACES Tonemapping
 * Fog
 * Bloom
 * Fast Approximate Anti-Aliasing (FXAA)
@@ -43,6 +54,7 @@ Graphics features currently supported:
 
 Engine features:
 * Pool allocators
+* GPU memory allocators/managers
 * Multi threaded utilities
 * Concurrent hash map
 * Entity-Component System (ECS)

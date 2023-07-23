@@ -4,63 +4,41 @@ permalink: /rendering/stratusgfx/feature_reel
 
 This page contains screenshots captured in realtime on an Nvidia GTX 1060 using the StratusGFX rendering engine.
 
-## Realtime Global Illumination + Indirect Shadowing
-Accomplished using virtual point lights.
+![sponza1](/assets/v0.10/SponzaGI_Front.png)
+![sponza2](/assets/v0.10/SponzaGI.png)
+![sponza3](/assets/v0.10/SponzaNight5.png)
+![sponza3](/assets/v0.10/Sponza_Door.png)
 
-![gi](/assets/portfolio/Sponza2022_gi_2.png)
+(3D Model: Intel Sponza)
 
-![gi](/assets/portfolio/Sponza2022_gi_5.png)
+![sanmiguel1](/assets/v0.10/FinalAfterPostProcessing.png)
+![sanmiguel2](/assets/v0.10/SanMiguel_GI2.0.png)
 
-![gi](/assets/portfolio/SanMiguel_gi_2.png)
+(3D Model: San Miguel)
 
-![gi](/assets/portfolio/SanMiguel_gi_6.png)
+![bistro1](/assets/v0.10/Bistro1.png)
+![bistro2](/assets/v0.10/Bistro2.png)
 
-![gi](/assets/portfolio/bistro_gi.png)
+(3D Model: Bistro)
 
-![gi](/assets/portfolio/bistro_gi_2.png)
+![junkshop](/assets/v0.10/JunkShop.png)
 
-## Raymarched Volumetric Lighting
-Accomplished by using view space raymarching in combination with cascaded shadow maps.
+(3D Model: Junk Shop)
 
-![volumetric](/assets/portfolio/bistro_volumetric.png)
+![forest](/assets/v0.10/Forest.png)
 
-![volumetric](/assets/portfolio/sanmiguel_volumetric.png)
+(3D Model: Pine Tree Showcase)
 
-![volumetric](/assets/portfolio/Sponza2022_volumetric.png)
+![cornell1](/assets/v0.10/Cornell_Back.png)
+![cornell2](/assets/v0.10/Cornell_Front.png)
 
-![volumetric](/assets/portfolio/warehouse_volumetric.png)
-
-## Physically Based Metallic-Roughness Pipeline
-Accomplished with single-scattering bidirectional reflectance distribution function (BRDF).
-
-![pbr](/assets/portfolio/bistro_pbr.png)
-
-![pbr](/assets/portfolio/Sponza2022_3.png)
-
-## Deferred Lighting + Soft Shadowing
-Accomplished using shadow caching with progressive dynamic updates and percentage closer soft shadows.
-
-![deferred](/assets/portfolio/bistro_shadow_1.png)
-
-![deferred](/assets/portfolio/bistro_shadow_2.png)
-
-## ACES Filmic Tonemapping
-Maps HDR color values to [0, 1] range before applying gamma correction.
-
-![aces](/assets/portfolio/bathroom_aces.png)
-
-![aces](/assets/portfolio/bathroom_aces2.png)
-
-## Bloom
-Accomplished with repeated downsampling of bright spots followed by repeated upsampling and combining with the main image.
-
-![bloom](/assets/portfolio/Bloom.png)
+(3D Model: Cornell Box)
 
 ## 3D Models Used In Screenshots
 
-* [https://www.intel.com/content/www/us/en/developer/topic-technology/graphics-research/samples.html](https://www.intel.com/content/www/us/en/developer/topic-technology/graphics-research/samples.html)
-* [https://developer.nvidia.com/orca/amazon-lumberyard-bistro](https://developer.nvidia.com/orca/amazon-lumberyard-bistro)
-* [https://sketchfab.com/3d-models/the-bathroom-free-d5e5035dda434b8d9beaa7271f1c85fc](https://sketchfab.com/3d-models/the-bathroom-free-d5e5035dda434b8d9beaa7271f1c85fc)
-* [https://casual-effects.com/data/](https://casual-effects.com/data/)
-* [https://sketchfab.com/3d-models/abandoned-warehouse-1e40d433ed6f48fb880a0d2172aff7ca](https://sketchfab.com/3d-models/abandoned-warehouse-1e40d433ed6f48fb880a0d2172aff7ca)
-* [https://sketchfab.com/3d-models/interogation-room-6e9151ec29494469a74081ddc054d569](https://sketchfab.com/3d-models/interogation-room-6e9151ec29494469a74081ddc054d569)
+* [Intel Sponza](https://www.intel.com/content/www/us/en/developer/topic-technology/graphics-research/samples.html)
+* [San Miguel](https://casual-effects.com/data/)
+* [Bistro](https://developer.nvidia.com/orca/amazon-lumberyard-bistro)
+* [Junk Shop](https://cloud.blender.org/p/gallery/5dd6d7044441651fa3decb56)
+* [Pine Tree Showcase](https://sketchfab.com/3d-models/pine-tree-showcase-bc529efa314344b9b2ca6c3fedff7b03)
+* [Cornell Box](https://sketchfab.com/3d-models/cornell-box-original-0d18de8d108c4c9cab1a4405698cc6b6)
