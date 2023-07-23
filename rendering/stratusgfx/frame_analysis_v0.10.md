@@ -293,6 +293,7 @@ Each was rendered with v0.10 of the engine.
 * [ReSTIR Theory Breakdown](https://agraphicsguynotes.com/posts/understanding_the_math_behind_restir_di/)
 * [Global Illumination in Tom Clancy's The Division](https://www.youtube.com/watch?v=04YUZ3bWAyg)
 * [Interactive Graphics 22: Global Illumination](https://www.youtube.com/watch?v=zlM4bMwqtCk)
+* [Radiance Caching for Real-Time Global Illumination](https://www.youtube.com/watch?v=dj0wVxwd1ng)
 
 #### Cascaded Shadow Maps
 
