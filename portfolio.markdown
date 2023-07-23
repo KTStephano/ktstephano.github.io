@@ -24,11 +24,11 @@ layout: home
 
 (3D Model: Cornell Box)
 
--> [Graphics Feature Reel](/rendering/stratusgfx/feature_reel)
-
 -> [GitHub Repo](https://github.com/KTStephano/StratusGFX)
 
--> [Video Tech Demo](https://www.youtube.com/watch?v=s5aIsgzwNPE)
+-> [Video Tech Demo](https://www.youtube.com/watch?v=dj0wVxwd1ng)
+
+-> [Image Feature Reel](/rendering/stratusgfx/feature_reel)
 
 -> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis_v0_10)
 
