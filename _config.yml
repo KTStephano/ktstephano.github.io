@@ -28,6 +28,7 @@ domain: ktstephano.github.io      # if you want to force HTTPS, specify the doma
 url: https://ktstephano.github.io  # the base hostname and protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  KTStephano
+markdown: kramdown
 
 # Build settings
 theme: minima
@@ -36,6 +37,7 @@ plugins:
   - jekyll-remote-theme
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-toc
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -75,3 +77,11 @@ utterances:
 header_pages:
   - index.markdown
   - portfolio.markdown
+
+# TOC Settings - see https://heymichellemac.com/table-of-contents-jekyll
+toc:
+  min_level: 1
+  max_level: 3
+  list_class: toc
+  list_class: toc__list
+  sublist_class: toc__sublist

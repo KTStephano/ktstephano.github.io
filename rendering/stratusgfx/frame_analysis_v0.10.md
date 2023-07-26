@@ -1,6 +1,8 @@
 ---
 permalink: /rendering/stratusgfx/frame_analysis_v0_10
 title: StratusGFX Technical Frame Analysis
+layout: page
+toc: true
 ---
 
 ![Sponza in StratusGFX](/assets/v0.10/FinalAfterPostProcessing.png)
@@ -9,6 +11,10 @@ title: StratusGFX Technical Frame Analysis
 This article will breakdown a lot of the high level technical details of how the Stratus graphics engine v0.10 renders a single frame. It is designed to be a deferred renderer with minimal forward passes. For performance it attempts to make heavy use of async data streaming to improve load times, reuses data from previous frames when it can, and amortizes work over the course of many frames.
 
 All scenes have been rendered in realtime on an Nvidia GTX 1060.
+
+# Table of Contents
+* TOC
+{:toc}
 
 # How A Frame Is Rendered
 
