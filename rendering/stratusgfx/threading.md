@@ -16,7 +16,9 @@ In this post I want to walk through the way that the threading and async model i
 These are a few of the things I was looking for when first desining these systems:
 
 1) Engine modules and application shouldn't need to spawn their own threads for anything
+
 2) It should be easy to queue up work on any thread
+
 3) When a thread adds an async callback, it should be the one to execute the callback when the job finishes
 
 Number 1 meant that all threads would be considered shared resources. Because of this it's an error for any work item to enter into an infinite loop. They need to follow the pattern of do some finite amount of work and then return.
