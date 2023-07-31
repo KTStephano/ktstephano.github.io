@@ -10,11 +10,14 @@ layout: home
 
 # StratusGFX Realtime Graphics Engine
 
-![sponza](/assets/v0.10/SponzaGI_Front.png)
+![sponza1](/assets/v0.10/SponzaGI_Front.png)
+![sponza2](/assets/v0.10/SponzaGI.png)
 
 (3D Model: Intel Sponza)
 
-![sanmiguel](/assets/v0.10/FinalAfterPostProcessing.png)
+![sanmiguel1](/assets/v0.10/FinalAfterPostProcessing.png)
+
+![sanmiguel2](/assets/v0.10/SanMiguel_Balcony2.png)
 
 (3D Model: San Miguel)
 
