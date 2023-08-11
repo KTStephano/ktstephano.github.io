@@ -21,6 +21,10 @@ layout: home
 
 (3D Model: San Miguel)
 
+![bistro](/assets/v0.10/Bistro1.png)
+
+(3D Model: Bistro)
+
 ![cornell_front](/assets/v0.10/Cornell_Front.png)
 
 ![cornell_back](/assets/v0.10/Cornell_Back.png)
