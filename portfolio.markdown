@@ -69,3 +69,30 @@ Modern graphics API features used:
 * Programmable vertex pulling
 * Multi draw elements indirect
 * Shader storage buffers
+
+# Interactive Software Raytracing
+
+![cornell_left](/assets/v0.11/Cornell6.png)
+
+![cornell_right](/assets/v0.11/Cornell5.png)
+
+(3D Model: Cornell Box)
+
+![rt_csponza](/assets/v0.11/RTSponza12.png)
+
+(3D Model: Crytek Sponza)
+
+(Emissive Texture: [https://www.pxfuel.com/en/desktop-wallpaper-ioptr](https://www.pxfuel.com/en/desktop-wallpaper-ioptr))
+
+This is an experimental feature still under development. The goal is to provide interactive software ray tracing on the GPU which does not require specialized RT hardware.
+
+Features:
+
+* Multi-bounce ray traced lighting
+* Directional lights and emissive surfaces
+
+To maintain interactive frame rates, the GPU ray traces a simplified version of the scene. Basic denoising with temporal accumulation is then applied.
+
+Runs on:
+
+* GTX 10-series cards and above
