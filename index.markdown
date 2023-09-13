@@ -19,6 +19,7 @@ In this space I'll be posting things related to game engines, graphics and GPGPU
 * [Other Modern OpenGL Resources](/rendering/opengl/other_resources)
 
 ### Graphics Engine Devlogs
+* [Sparse Virtual Shadow Maps (WIP/Rough Draft)](/rendering/stratusgfx/svsm)
 * [Stratus Multithreading and Async](/rendering/stratusgfx/threading)
 * [Technical Frame Analysis](/rendering/stratusgfx/frame_analysis_v0_10)
 * [View Frustum Culling Using Axis-Aligned Bounding Boxes (AABBs)](/rendering/stratusgfx/aabbs.md)

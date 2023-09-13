@@ -1,4 +1,5 @@
 ---
+layout: page
 permalink: /rendering/stratusgfx/threading
 title: Stratus Multithreading and Async
 ---
