@@ -378,7 +378,7 @@ Next we need to perform coordinate wrap around. To do this we can use the fract 
 Next we can use these wrapped virtual coordinates to get the page table entry. Once we have that we can use bitmask operations to pull out the physical page X/Y offset and memory pool index.
 
 {% highlight glsl %}
-        ivec2 pageTableIndex = ivec2(floor(virtualTexCoords * vsmNumPagesXY));
+        ivec2 pageTableIndex = ivec2(floor(virtualTexCoords * vec2(vsmNumPagesXY)));
         uint entry = imageLoad(pageTable, ivec3(pageTableIndex, clipMapIndex));
 
         ivec2 physicalPageXYOffset;
