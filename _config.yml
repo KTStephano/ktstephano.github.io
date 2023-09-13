@@ -88,3 +88,6 @@ toc:
 
 minima:
   skin: solarized-light
+
+usemathjax: true
+math_engine: mathjax

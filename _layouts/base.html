@@ -3,6 +3,12 @@
 
   {%- include head.html -%}
 
+  <!--
+  {% if page.use_math %}
+  {% include mathjax-init.html %}
+  {% endif %}
+  -->
+
   <body>
 
     {%- include header.html -%}
@@ -11,6 +17,29 @@
       <div class="wrapper">
         {{ content }}
       </div>
+
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            TeX: {
+              equationNumbers: {
+                autoNumber: "AMS"
+              }
+            },
+            tex2jax: {
+            inlineMath: [ ['$', '$'] ],
+            displayMath: [ ['$$', '$$'] ],
+            processEscapes: true,
+          }
+        });
+        MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+              alert("Math Processing Error: "+message[1]);
+            });
+        MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+              alert("Math Processing Error: "+message[1]);
+            });
+    </script>
+    
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript" ></script>
     </main>
 
     {%- include footer.html -%}
