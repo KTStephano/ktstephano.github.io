@@ -58,7 +58,7 @@ Sparse virtual texturing uses the same approach. For this to work, each physical
 
 Like with other virtual memory systems, sparse virtual texturing only maintains the minimum amount of texture data in memory for the application to continue normally. It does this by analyzing the current camera view of the scene to determine what is needed verses what can be left unallocated.
 
-At runtime, shaders will use virtual coordinates rather than physical coordinates. These virtual coordinates are translated to physical coordinates using the page table. When the data that the virtual coordinates is not currently resident in physical memory, this results in a page fault. Some mechanism (such as readback SSBO) needs to be used to tell the CPU to perform an allocation and prepare the physical memory for use.
+At runtime, shaders will use virtual coordinates rather than physical coordinates. These virtual coordinates are translated to physical coordinates using the page table. When the data that the virtual coordinates reference is not currently resident in physical memory, this results in a page fault. Some mechanism (such as readback SSBO) needs to be used to tell the CPU to perform an allocation and prepare the physical memory for use.
 
 ### Clipmaps
 
@@ -461,7 +461,7 @@ For this option you can contract or expand the size of the shadow map so that yo
 
 Another option is to write a sampling function that checks to see if the starting texel is on the page boundary. If it is you can perform software shadow filtering so that you can avoid sampling into memory that has nothing to do with the current page.
 
-If not on a boarder, use hardware filtering as normal.
+If not on a border, use hardware filtering as normal.
 
 ### Option 3: Manual
 
