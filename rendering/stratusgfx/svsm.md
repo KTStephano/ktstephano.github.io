@@ -379,7 +379,7 @@ Next we can use these wrapped virtual coordinates to get the page table entry. O
 
 {% highlight glsl %}
         ivec2 pageTableIndex = ivec2(floor(virtualTexCoords * vec2(vsmNumPagesXY)));
-        uint entry = imageLoad(pageTable, ivec3(pageTableIndex, clipMapIndex));
+        uint entry = imageLoad(pageTable, ivec3(pageTableIndex, clipMapIndex)).r;
 
         ivec2 physicalPageXYOffset;
         int memoryPoolIndex;
