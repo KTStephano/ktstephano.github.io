@@ -467,6 +467,10 @@ If not on a boarder, use hardware filtering as normal.
 
 The last option is to abandon hardware shadow filtering completely and write your own software filtering code. This has the advantage of not requiring branching in the shader or adding any page borders.
 
+# Post-Processing Effects
+
+There will be times when certain post processing effects such as volumetric lighting might require data to be present in the shadow map that is outside of the current view of the camera. When this is the case it will be necessary to add some extra logic during the page marking/depth prepass stage. The clipmap cascade that is marked will depend on what level of resolution the post processing effect will need. If it can get away with low resolution then it can go with the further/coarser cascades to save on bandwidth and performance.
+
 # Existing Problems/Future Work
 
 TODO: Add
