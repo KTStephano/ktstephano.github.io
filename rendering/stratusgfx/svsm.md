@@ -389,8 +389,8 @@ Next we can use these wrapped virtual coordinates to get the page table entry. O
 Once we have these values, what we need to do is figure out which texel the virtualTexCoords are trying to point to. What we know about the physical pages is that they are `128x128` texels in size. So to figure out which texel we need to point to, we can calculate the virtual pixel coordinate and mod it by 128.
 
 {% highlight glsl %}
-        vec2 virtualPixelCoords = virtualTexCoords * vsmTexelResolutionXY;
-        vec2 physicalPageTexelOffsets = mod(virtualPixelCoords, 128);
+        vec2 virtualPixelCoords = virtualTexCoords * vec2(vsmTexelResolutionXY);
+        vec2 physicalPageTexelOffsets = mod(virtualPixelCoords, 128.0);
 {% endhighlight %}
 
 The final step is to convert these coordinates to actual physical coordinates that we can use to sample the physical texture. Since `physicalPageXYOffset` points to the lower-left corner of the physical page (in indices, not texels) and `physicalPageTexelOffsets` points to the texel within that page, we can multiply `physicalPageXYOffset` by the number of texels per page (128) and add it to `physicalPageTexelOffsets`.
