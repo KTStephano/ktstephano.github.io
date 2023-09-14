@@ -26,7 +26,7 @@ This was developed in loose collaboration with:
 
 # Introduction
 
-This post goes through the high level steps needed to create a sparse virtual memory system for realtime shadows. This was inspired by Unreal Engine 5's virtual shadow maps. Directional lights are the only ones considered here, but it should be possible to extend the system to support other light types such as point or spotlights. 
+This post goes through the high-level steps needed to create a sparse virtual memory system for realtime shadows. This was inspired by Unreal Engine 5's virtual shadow maps. Directional lights are the only ones considered here, but it should be possible to extend the system to support other light types such as point or spotlights. 
 
 The directional shadows make use of clipmaps for incremental updating of the shadowmaps and handling multiple different cascades. Each clipmap cascade can be set to very high virtual resolutions such as 4K, 8K or 16K.
 
@@ -40,11 +40,11 @@ This system replaces normal shadow map uv coordinates with virtual uv coordinate
 
 ### Caching
 
-As the camera moves around the scene, new virtual pages become visible and are rendered incrementally. Previously-rendered pages that are still visible and haven't changed can be reused from frame to frame to save on performance.
+As the camera moves around the scene, new virtual pages become visible and are rendered incrementally. Previously rendered pages that are still visible and haven't changed can be reused from frame to frame to save on performance.
 
 # Foundations
 
-This technique is built off of two core foundations: sparse virtual texturing and clipmaps.
+This technique is built off two core foundations: sparse virtual texturing and clipmaps.
 
 ### Sparse Virtual Texturing
 
@@ -53,9 +53,9 @@ This technique is built off of two core foundations: sparse virtual texturing an
 * [Another Sparse Virtual Textures](https://studiopixl.com/2022-04-27/sparse-virtual-textures)
 * [Understanding Virtual Memory](https://performanceengineeringin.wordpress.com/2019/11/04/understanding-virtual-memory/)
 
-With regular virtual memory, all addresses used by a usermode application are virtual addresses. When the memory needs to be used in some way, the OS has to translate the virtual addresses into physical addresses. Using this system, some of the bits of the virtual address are used as an offset into a translation (page) table, and that entry in the page table is used to determine where in physical memory to go. Each entry in the page table represents a physical page/block of memory with a fixed size (ex: 4 kb).
+With regular virtual memory, all addresses used by a user mode application are virtual addresses. When the memory needs to be used in some way, the OS must translate the virtual addresses into physical addresses. Using this system, some of the bits of the virtual address are used as an offset into a translation (page) table, and that entry in the page table is used to determine where in physical memory to go. Each entry in the page table represents a physical page/block of memory with a fixed size (ex: 4 kb).
 
-An important part of a virtual memory system is that it is not required to have everything ready in system RAM at all times. Parts that aren't needed can be paged out to secondary storage and kept there until requested. When a process makes a request to access a piece of memory that is either out of date or not present in RAM at all, this is known sa a page fault. When this happens it is the job of the OS to handle it by making sure that the memory the process is trying to use is present and up to date. Once this is done the process can resume execution.
+An important part of a virtual memory system is that it is not required to always have everything available in RAM. Parts that aren't needed can be paged out to secondary storage and kept there until requested. When a process makes a request to access a piece of memory that is either out of date or not present in RAM at all, this is known as a page fault. When this happens, it is the job of the OS to handle it by making sure that the memory the process is trying to use is present and up to date. Once this is done the process can resume execution.
 
 Sparse virtual texturing uses the same approach. For this to work, each physical page of memory is a 2D block of size 128x128 texels (or some other power of two supported by the hardware). For an 8K x 8K virtual texture, this would result in 64x64 page table entries. This 64x64 grid is our version of the page table.
 
@@ -63,7 +63,7 @@ Like with other virtual memory systems, sparse virtual texturing only maintains 
 
 At runtime, shaders will use virtual coordinates rather than physical coordinates. These virtual coordinates are translated to physical coordinates using the page table. When the data that the virtual coordinates reference is not currently resident in physical memory, this results in a page fault. Some mechanism (such as readback SSBO) needs to be used to tell the CPU to perform an allocation and prepare the physical memory for use.
 
-Sparse virtual shadow mapping borrows all of these ideas with one exception: page faults don't require us to read from secondary storage. Instead, page faults represent a piece of memory that we need to render shadows into in order for the shaders to compute shadowing or post processing effects properly.
+Sparse virtual shadow mapping borrows all these ideas with one exception: page faults don't require us to read from secondary storage. Instead, page faults represent a piece of memory that we need to render shadows into so that the shaders can compute shadowing or post processing effects properly.
 
 ### Clipmaps
 
@@ -94,7 +94,7 @@ Since this method focuses on using hardware rasterization, some amount of duplic
 
 ![overview](/assets/v0.11/svsms/VSM_Overview.png)
 
-This is a brief overview of all of the steps required to render shadows for a single frame. The next sections will go over the steps in a lot more detail.
+This is a brief overview of all the steps required to render shadows for a single frame. The next sections will go over the steps in a lot more detail.
 
 ### Step 1: Analyze Depth Buffer
 ![step1](/assets/v0.11/svsms/VSM_Step1.png)
@@ -146,7 +146,7 @@ Once there is valid memory, control can be returned to the GPU so that it can cl
 
 Each cascade will have its own ViewProjection matrix for rendering, and this means that it can be represented as a virtual screen. For each virtual pixel we can map it to a page table entry, check if that entry is dirty and if so, that portion of the virtual screen needs to be rendered. At the end we will have a set of screen tiles (each as large as a page) that need to be rendered. In the picture this region of screen tiles that need to be rendered is green while everything in red can be skipped.
 
-You'll notice that some pages marked 0 are included in the page bounds. This represents some degree of wasted effort, but for simplicity the renderable screen region is made rectangular. Object culling can help with this situation since it can reduce or eliminate fragments being generated for screen tiles that are within the update region but don't actually need to be updated.
+You'll notice that some pages marked 0 are included in the page bounds. This represents some degree of wasted effort, but for simplicity the renderable screen region is made rectangular. Object culling can help with this situation since it can reduce or eliminate fragments being generated for screen tiles that are within the update region but don't need to be updated.
 
 ### Step 5: Cull Objects
 ![step5](/assets/v0.11/svsms/VSM_Culling.png)
@@ -205,7 +205,7 @@ Now for rendering this cascade, `newProjectionViewRender` is used. This will sav
 
 ### Page Table Structure
 
-Each entry in the page table manages the state for a single `128x128` texel page. So if the virtual resolution is set to `8182x8192`, the page table will need to be `64x64` elements in size.
+Each entry in the page table manages the state for a single `128x128` texel page. So, if the virtual resolution is set to `8182x8192`, the page table will need to be `64x64` elements in size.
 
 Here is a possible implementation of a page table entry (32 bits per entry):
 
@@ -231,7 +231,7 @@ Once we have these two groups of matrices, the steps of moving from virtual to p
 
 2) Perform coordinate wrap around for any values outside of **[0, 1]** range
 
-3) Use wrapped coordinates to access the page table and pull out physical X/Y offset and memory pool index
+3) Use wrapped coordinates to access the page table and pull-out physical X/Y offset and memory pool index
 
 4) Use physical X/Y offset and memory pool index to construct physical uv coordinates
 
@@ -270,7 +270,7 @@ where the upper 3x3 matrix contains only rotation.
 
 #### Projection View Render
 
-All local clip origin matrices share the same orthographic matrix from above. The only difference is that they add a translation component to their local directional light view matrix. As the player moves around the scene, we want to change the clip origin so that we can render the shadows in a concentric rings around the player.
+All local clip origin matrices share the same orthographic matrix from above. The only difference is that they add a translation component to their local directional light view matrix. As the player moves around the scene, we want to change the clip origin so that we can render the shadows in concentric rings around the player.
 
 The view matrix looks like this:
 
@@ -339,7 +339,7 @@ $$
 
 This gives us NDC coordinates for the first clip map cascade. What if we want to convert the result back to what it would have been if we had used projection-view sample? We can subtract off $$2t_x/d_k, 2t_y/dk$$ from the result.
 
-What about for the other cascades? We know that for each successive clip map cascade, $$d_k$$ doubles in size but everything else remains the same including the translation component. So to convert from cascade 0 to cascade n, we can multiply the result by $$1/2^c$$ where $$c$$ is the cascade index from **[0, cascades - 1]**.
+What about for the other cascades? We know that for each successive clip map cascade, $$d_k$$ doubles in size but everything else remains the same including the translation component. So, to convert from cascade 0 to cascade n, we can multiply the result by $$1/2^c$$ where $$c$$ is the cascade index from **[0, cascades - 1]**.
 
 Because of this we only need to pass in the matrix for the very first clip map cascade and we can use it in the shader to convert to any other cascade, or back to the projection-view sample space. Here is some GLSL code that does this:
 
@@ -409,7 +409,7 @@ Next we can use these wrapped virtual coordinates to get the page table entry. O
         UnpackPhysicalMemoryData(entry, physicalPageXYOffset, memoryPoolIndex);
 {% endhighlight %}
 
-Once we have these values, what we need to do is figure out which texel the virtualTexCoords are trying to point to. What we know about the physical pages is that they are `128x128` texels in size. So to figure out which texel we need to point to, we can calculate the virtual pixel coordinate and mod it by 128.
+Once we have these values, what we need to do is figure out which texel the virtualTexCoords are trying to point to. What we know about the physical pages is that they are `128x128` texels in size. So, to figure out which texel we need to point to, we can calculate the virtual pixel coordinate and mod it by 128.
 
 {% highlight glsl %}
         vec2 virtualPixelCoords = virtualTexCoords * vec2(vsmTexelResolutionXY);
@@ -545,7 +545,7 @@ Another common situation is when the directional light rotates. This is a case w
 
 <img src="/assets/v0.11/svsms/VSM_Invalidate.gif" alt="invalidate" />
 
-This situation results in all of the pages becoming invalid at the same time. If the light is rotating very slowly it may be possible to reuse old data while staggering the updates to improve performance, but this is an open issue I don't have a good answer to right now. One approach mentioned in [this Fortnite article](https://www.unrealengine.com/en-US/tech-blog/virtual-shadow-maps-in-fortnite-battle-royale-chapter-4) is that if your scene will have frequent directional light changes, fine tune shadow rendering to prioritize page rendering performance. One way would be reduce the virtual resolution: drop to 8K or 4K. Another is to adopt a meshlet-based rendering pipeline to reduce the amount of pages each object overlaps (improves culling potential).
+This situation results in all the pages becoming invalid at the same time. If the light is rotating very slowly it may be possible to reuse old data while staggering the updates to improve performance, but this is an open issue I don't have a good answer to right now. One approach mentioned in [this Fortnite article](https://www.unrealengine.com/en-US/tech-blog/virtual-shadow-maps-in-fortnite-battle-royale-chapter-4) is that if your scene will have frequent directional light changes, fine tune shadow rendering to prioritize page rendering performance. One way would be reducing the virtual resolution: drop down to 8K or 4K. Another is to adopt a meshlet-based rendering pipeline to reduce the nunmber of pages each object overlaps (improves culling potential).
 
 ### Dynamic Objects
 
@@ -555,30 +555,30 @@ The second is to maintain two sets of clipmap cascades: one for static objects a
 
 # Allocation Strategy
 
-An easy way to handle allocation for this virtual memory system is to pack a list of free pages into a shader storage buffer object (SSBO). When the GPU wants to allocate, it can remove the topmost entry using shader atomics and add that page to the corresponding page table entry. When it wants to deallocate it can add the page back to the front of the list again using shader atomics.
+An easy way to handle allocation for this virtual memory system is to pack a list of free pages into a shader storage buffer object (SSBO). When the GPU wants to allocate, it can remove the topmost entry using shader atomics and add that page to the corresponding page table entry. When it wants to deallocate, it can add the page back to the front of the list again using shader atomics.
 
 In the following gif the lower left shows the first memory pool as it pulls pages from the free list or adds them back. Black = unallocated.
 
 <img src="/assets/v0.11/svsms/VSM_Allocator.gif" alt="allocator" />
 
-Each implementation will need to decide how to deal with the case of a memory pool running out of memory during a given frame. It's possible that more pages will be requested than a single memory pool can handle. One approach would be to trigger a page fault like normal but the CPU could then allocate a whole new block to pull memory from. Another approach would be to evict pages corresponding to coarser cascades and prioritize putting them in the cascades closer to the camera.
+Each implementation will need to decide how to deal with the case of a memory pool running out of memory during a given frame. It's possible that more pages will be requested than a single memory pool can handle. One approach would be to trigger a page fault like normal, but the CPU could then allocate a whole new block to pull memory from. Another approach would be to evict pages corresponding to coarser cascades and prioritize putting them in the cascades closer to the camera.
 
-The decision for when to evict a page from the cache is also configurable. The page table has enough bits to count up to 15 frames as a delay for evicting a page from the cache, but by default it marks pages free as soon as they are no longer required for a given frame (no delay). The only reason to keep pages in the cache for longer than 1 frame when they aren't being requested is for the situation where the camera pans around, then turns back to face where it was originally facing. In this case the pages it was looking at originally would still be around and not have to be rendered.
+The decision for when to evict a page from the cache is also configurable. The page table has enough bits to count to 15 frames as a delay for evicting a page from the cache, but by default it marks pages free as soon as they are no longer required for a given frame (no delay). The only reason to keep pages in the cache for longer than 1 frame when they aren't being requested is for the situation where the camera pans around, then turns back to face where it was originally facing. In this case the pages it was looking at originally would still be around and not have to be rendered.
 
-For actually implementing a sparse allocation strategy with graphics API support, see the following:
+For implementing a sparse allocation strategy with graphics API support, see the following:
 * [Sparse Textures OpenGL](https://gpuopen.com/learn/sparse-textures-opengl/)
 * [Sparse Resources Vulkan](https://registry.khronos.org/vulkan/site/spec/latest/chapters/sparsemem.html)
 * [Tiled Resources DirectX](https://learn.microsoft.com/en-us/windows/win32/direct3d11/tiled-resources)
 
 # Shadow Render Budget
 
-One possible performance optimization is to add a configurable render budget for shadow map generation. To conceptualize this we can return to the clip map page from earlier.
+One possible performance optimization is to add a configurable render budget for shadow map generation. To conceptualize this, we can return to the clip map page from earlier.
 
 ![mips](/assets/v0.11/svsms/VSM_Mips.png)
 
 From this image we can see that each cascade, even though not strictly part of a mip chain, can still be used as one since each successive cascade is fully capable of representing everything from the previous cascade, just at a lower effective resolution.
 
-This allows us to specify one or more cascades to serve as the lowest/coarsest levels in the mip chain. When we perform the depth buffer analysis, not only will we mark the pages in the finest detail mip levels, we will also mark the corresponding pages in the lowest mip levels.
+This allows us to specify one or more cascades to serve as the lowest/coarsest levels in the mip chain. When we perform the depth buffer analysis, not only will we mark the pages in the finest detail mip levels, but we will also mark the corresponding pages in the lowest mip levels.
 
 Then what we can do when rendering is to set a budget for how many pages from the finest mips to process before saving them for the next frame. The lowest mips will be rendered fully every frame so we can use them as a fallback when data is not available at a higher resolution.
 
@@ -586,7 +586,7 @@ This gif shows what this looks like (slowed down to exaggerate the shadow pop in
 
 <img src="/assets/v0.11/svsms/VSM_Popin.gif" alt="popin" />
 
-As the camera moves through the wall, you'll notice that part of the scene has to temporarily fall back to lower (coarser) mip levels until all of the higher (finer) mip levels are processed.
+As the camera moves through the wall, you'll notice that part of the scene must temporarily fall back to lower (coarser) mip levels until all of the higher (finer) mip levels are processed.
 
 This is a nice option to have since it provides a setting that can be tweaked for different hardware and different scene complexities. It could also be set dynamically to help when the rendering is struggling to maintain target frame times.
 
@@ -604,7 +604,7 @@ For this option you can contract or expand the size of the shadow map so that yo
 
 ### Option 2: Hybrid
 
-Another option is to write a sampling function that checks to see if the starting texel is on the page boundary. If it is you can perform software shadow filtering so that you can avoid sampling into memory that has nothing to do with the current page.
+Another option is to write a sampling function that checks to see if the starting texel is on the page boundary. If it is, you can perform software shadow filtering so that you can avoid sampling into memory that has nothing to do with the current page.
 
 If not on a border, use hardware filtering as normal.
 
@@ -614,7 +614,7 @@ The last option is to abandon hardware shadow filtering completely and write you
 
 # Post-Processing Effects
 
-There will be times when certain post processing effects such as volumetric lighting might require data to be present in the shadow map that is outside of the current view of the camera. When this is the case it will be necessary to add some extra logic during the page marking/depth prepass stage. The clipmap cascade that is marked will depend on what level of resolution the post processing effect will need. If it can get away with low resolution then it can go with the further/coarser cascades to save on bandwidth and performance.
+There will be times when certain post processing effects such as volumetric lighting might require data to be present in the shadow map that is outside of the current view of the camera. When this is the case, it will be necessary to add some extra logic during the page marking/depth prepass stage. The clipmap cascade that is marked will depend on what level of resolution the post processing effect will need. If it can get away with low resolution, then it can go with the further/coarser cascades to save on bandwidth and performance.
 
 Thanks for reading!
 
