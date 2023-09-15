@@ -44,7 +44,7 @@ As the camera moves around the scene, new virtual pages become visible and are r
 
 # Motivation and Comparison
 
-The motivation for using this approach falls into three main categories:
+The motivations for using this approach fall into three categories:
 
 * Significant increase in shadow map resolution while maintaining highly configurable (even dynamic) performance costs
 * Provide the ability to cover massive world distances with a single shadow technique
