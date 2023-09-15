@@ -44,7 +44,7 @@ As the camera moves around the scene, new virtual pages become visible and are r
 
 # Motivation and Comparison
 
-The motivation for using this approach falls into two main categories:
+The motivation for using this approach falls into three main categories:
 
 * Significant increase in shadow map resolution while maintaining highly configurable (even dynamic) performance costs
 * Provide the ability to cover massive world distances with a single shadow technique
@@ -54,7 +54,7 @@ The motivation for using this approach falls into two main categories:
 
 An important aspect mentioned in the introduction is that if a cascade doesn't have much geometry inside of it, processing overhead and memory footprint for that cascade can be reduced close to 0. This opens the possibility of maintaining 10, 15 or even 20 cascades. In addition, if the virtual resolution is set to 8K or 16K, every cascade gets its own 8K or 16K virtual shadow map. This allows for high quality, consistent shadows that cover huge world distances.
 
-Standard cascaded shadow maps (CSM) struggle to handle this without heavy optimization. In many ways sparse virtual shadow maps are a specialization of CSM with the optimizations required to improve memory usage, increase resolution, cover even larger max distances, and avoid duplicate shadow reprocessing for data that hasn't changed since last frame.
+Standard cascaded shadow maps (CSMs) struggle to handle this without heavy optimization. In many ways sparse virtual shadow maps are an extension of CSMs with the optimizations required to improve memory usage, increase resolution, cover even larger max distances, and avoid duplicate shadow reprocessing for data that hasn't changed since last frame.
 
 # Foundations
 
@@ -549,17 +549,25 @@ int VsmCalculateCascadeIndexFromWorldPos(in vec3 worldPos) {
 }
 {% endhighlight %}
 
+Here is a visual of cascades changing as the camera moves closer or further from geometry:
+
+<img src="/assets/v0.11/svsms/VSM_Cascade_Change.gif" alt="cascade_change" />
+
+When pages become visually smaller and change in color tone this is an indication they are part of finer cascades. Visually larger pages are an indication they are part of coarser cascades.
+
 # Cache Invalidation Events
 
 There are a few situations where one or more cache entries become invalid. The first is the most common which is when a page is no longer needed for the current frame. In this case it can be marked invalid and its physical memory freed up for other pages.
 
 ### Light Rotation
 
-Another common situation is when the directional light rotates. This is a case when projection-view sample changes, and because of this the entire virtual address mapping changes. Here is a visual of the location of the pages changing because of directional light rotation:
-
-<img src="/assets/v0.11/svsms/VSM_Invalidate.gif" alt="invalidate" />
+Another common situation is when the directional light rotates. This is a case when projection-view sample changes, and because of this the entire virtual address mapping changes.
 
 This situation results in all the pages becoming invalid at the same time. If the light is rotating very slowly it may be possible to reuse old data while staggering the updates to improve performance, but this is an open issue I don't have a good answer to right now. One approach mentioned in [this Fortnite article](https://www.unrealengine.com/en-US/tech-blog/virtual-shadow-maps-in-fortnite-battle-royale-chapter-4) is that if your scene will have frequent directional light changes, fine tune shadow rendering to prioritize page rendering performance. One way would be reducing the virtual resolution: drop down to 8K or 4K. Another is to adopt a meshlet-based rendering pipeline to reduce the nunmber of pages each object overlaps (improves culling potential).
+
+Here is a visual of the location of the pages changing because of directional light rotation:
+
+<img src="/assets/v0.11/svsms/VSM_Invalidate.gif" alt="invalidate" />
 
 ### Dynamic Objects
 
