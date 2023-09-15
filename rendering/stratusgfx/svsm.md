@@ -44,11 +44,10 @@ As the camera moves around the scene, new virtual pages become visible and are r
 
 # Motivation and Comparison
 
-The motivations for using this approach fall into three categories:
+The motivations for using this approach fall into two categories:
 
 * Significant increase in shadow map resolution while maintaining highly configurable (even dynamic) performance costs
 * Provide the ability to cover massive world distances with a single shadow technique
-* Removes the need for supplemental techniques such as screen space shadows
 
 ### Comparison to Cascaded Shadow Maps
 
