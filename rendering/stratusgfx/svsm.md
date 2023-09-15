@@ -11,7 +11,7 @@ use_math: true
 The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the physical memory pages (squares) where each color represents a different shadow clipmap/cascade.
 
 **This is a WIP/rough draft!**
-**Last edited: Sept 14, 2023.**
+**Last edited: Sept 15, 2023.**
 
 # Collaborators
 
@@ -41,6 +41,20 @@ This system replaces normal shadow map uv coordinates with virtual uv coordinate
 ### Caching
 
 As the camera moves around the scene, new virtual pages become visible and are rendered incrementally. Previously rendered pages that are still visible and haven't changed can be reused from frame to frame to save on performance.
+
+# Motivation and Comparison
+
+The motivation for using this approach falls into two main categories:
+
+* Significant increase in shadow map resolution while maintaining highly configurable (even dynamic) performance costs
+* Provide the ability to cover massive world distances with a single shadow technique
+* Removes the need for supplemental techniques such as screen space shadows
+
+### Comparison to Cascaded Shadow Maps
+
+An important aspect mentioned in the introduction is that if a cascade doesn't have much geometry inside of it, processing overhead and memory footprint for that cascade can be reduced close to 0. This opens the possibility of maintaining 10, 20 or even 30 cascades. This allows for high quality, consistent shadows that cover huge world distances.
+
+Standard cascaded shadow maps (CSM) struggle to handle this without heavy optimization. In many ways sparse virtual shadow maps are a specialization of CSM with the optimizations required to improve memory usage, increase resolution, and avoid duplicate shadow reprocessing for data that hasn't changed since last frame.
 
 # Foundations
 
