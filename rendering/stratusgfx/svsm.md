@@ -52,7 +52,7 @@ The motivation for using this approach falls into two main categories:
 
 ### Comparison to Cascaded Shadow Maps
 
-An important aspect mentioned in the introduction is that if a cascade doesn't have much geometry inside of it, processing overhead and memory footprint for that cascade can be reduced close to 0. This opens the possibility of maintaining 10, 20 or even 30 cascades. This allows for high quality, consistent shadows that cover huge world distances.
+An important aspect mentioned in the introduction is that if a cascade doesn't have much geometry inside of it, processing overhead and memory footprint for that cascade can be reduced close to 0. This opens the possibility of maintaining 10, 15 or even 20 cascades. In addition, if the virtual resolution is set to 8K or 16K, every cascade gets its own 8K or 16K virtual shadow map. This allows for high quality, consistent shadows that cover huge world distances.
 
 Standard cascaded shadow maps (CSM) struggle to handle this without heavy optimization. In many ways sparse virtual shadow maps are a specialization of CSM with the optimizations required to improve memory usage, increase resolution, and avoid duplicate shadow reprocessing for data that hasn't changed since last frame.
 
