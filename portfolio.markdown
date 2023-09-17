@@ -8,6 +8,9 @@ layout: home
 
 ---
 
+* TOC
+{:toc}
+
 # StratusGFX Realtime Graphics Engine
 
 ![sponza1](/assets/v0.10/SponzaGI_Front.png)
@@ -39,40 +42,21 @@ layout: home
 
 -> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis_v0_10)
 
-Built Using:
-* C++17
-* OpenGL 4.6
+Stratus is a realtime, GPU-driven graphics engine which uses a deferred rendering pipeline. Key features include physically-based volumetric lighting, global illumination, image denoising and other modern features. It is optimized to run on lower-end hardware while still providing good visual quality.
 
-Graphics features currently supported:
-* Physically based metallic-roughness pipeline
-* Realtime global illumination
-* Spatiotemporal image denoising
-* Raymarched volumetric lighting and shadowing
-* Cascaded shadow mapping
-* Deferred lighting
-* Mesh LOD generation and selection
-* GPU Frustum Culling
-* Screen Space Ambient Occlusion (SSAO)
-* Reinhard or ACES Tonemapping
-* Fog
-* Bloom
-* Fast Approximate Anti-Aliasing (FXAA)
-* Temporal Anti-Aliasing (TAA)
+A full list of features can be found on [the GitHub repo](https://github.com/KTStephano/StratusGFX).
 
-Engine features:
-* Pool allocators
-* GPU memory allocators/managers
-* Multi threaded utilities
-* Concurrent hash map
-* Entity-Component System (ECS)
-* Logging
+# Sparse Virtual Shadow Maps
 
-Modern graphics API features used:
-* Compute shaders
-* Direct state access
-* Programmable vertex pulling
-* Multi draw elements indirect
-* Shader storage buffers
+![vsm_bistro](/assets/v0.11/svsms/VSM1_Bistrov2.png)
+
+<img src="/assets/v0.11/svsms/VSM_Invalidate.gif" alt="invalidate" />
+(Virtual address space shifting as light rotates)
+
+<img src="/assets/v0.11/svsms/VSM_Cascade_Change.gif" alt="cascade_change" />
+(Cascades increasing in resolution as camera moves closer)
+
+This is a virtual memory system and data caching solution for high-quality realtime shadows over large distances. A full tech writeup can be found here: [Sparse Virtual Shadow Maps](/rendering/stratusgfx/svsm)
 
 # Interactive Software Raytracing
 
