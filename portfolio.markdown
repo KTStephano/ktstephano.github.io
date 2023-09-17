@@ -13,6 +13,8 @@ layout: home
 
 # StratusGFX Realtime Graphics Engine
 
+{% include youtube.html id="K3xXsLk5A0s" %}
+
 ![sponza1](/assets/v0.10/SponzaGI_Front.png)
 ![sponza2](/assets/v0.10/SponzaGI.png)
 
@@ -51,7 +53,7 @@ A full list of features can be found on [the GitHub repo](https://github.com/KTS
 ![vsm_bistro](/assets/v0.11/svsms/VSM1_Bistrov2.png)
 
 <img src="/assets/v0.11/svsms/VSM_Invalidate.gif" alt="invalidate" />
-(Virtual address space shifting as light rotates)
+(Virtual address space shifting as light rotates
 
 <img src="/assets/v0.11/svsms/VSM_Cascade_Change.gif" alt="cascade_change" />
 (Cascades increasing in resolution as camera moves closer)
