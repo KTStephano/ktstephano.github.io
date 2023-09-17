@@ -50,7 +50,7 @@ A full list of features can be found on [the GitHub repo](https://github.com/KTS
 
 [Junk Shop](https://cloud.blender.org/p/gallery/5dd6d7044441651fa3decb56)
 
-**Other Stratus links:***
+**Other Stratus links:**
 
 -> [GitHub Repo](https://github.com/KTStephano/StratusGFX)
 
