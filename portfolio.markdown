@@ -36,17 +36,29 @@ layout: home
 
 (3D Model: Cornell Box)
 
+Stratus is a realtime, GPU-driven graphics engine which uses a deferred rendering pipeline. Key features include physically-based volumetric lighting, global illumination, image denoising and other modern features. It is optimized to run on lower-end hardware while still providing good visual quality.
+
+A full list of features can be found on [the GitHub repo](https://github.com/KTStephano/StratusGFX).
+
+**3D models used in tech demo and images above:**
+
+[Pine Tree Forest](https://sketchfab.com/3d-models/pine-tree-showcase-bc529efa314344b9b2ca6c3fedff7b03)
+
+[Intel Sponza](https://www.intel.com/content/www/us/en/developer/topic-technology/graphics-research/samples.html)
+
+[Bistro](https://developer.nvidia.com/orca/amazon-lumberyard-bistro)
+
+[Junk Shop](https://cloud.blender.org/p/gallery/5dd6d7044441651fa3decb56)
+
+**Other Stratus links:***
+
 -> [GitHub Repo](https://github.com/KTStephano/StratusGFX)
 
--> [Video Tech Demo](https://www.youtube.com/watch?v=dj0wVxwd1ng)
+-> [Full Video Tech Demo](https://www.youtube.com/watch?v=dj0wVxwd1ng)
 
 -> [Image Feature Reel](/rendering/stratusgfx/feature_reel)
 
 -> [Technical Breakdown of a Single Frame](/rendering/stratusgfx/frame_analysis_v0_10)
-
-Stratus is a realtime, GPU-driven graphics engine which uses a deferred rendering pipeline. Key features include physically-based volumetric lighting, global illumination, image denoising and other modern features. It is optimized to run on lower-end hardware while still providing good visual quality.
-
-A full list of features can be found on [the GitHub repo](https://github.com/KTStephano/StratusGFX).
 
 # Sparse Virtual Shadow Maps
 
