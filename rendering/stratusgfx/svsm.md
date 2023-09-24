@@ -11,7 +11,7 @@ use_math: true
 The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the physical memory pages (squares) where each color represents a different shadow clipmap/cascade.
 
 **This is a WIP/rough draft!**
-**Last edited: Sept 18, 2023.**
+**Last edited: Sept 24, 2023.**
 
 # Collaborators
 
@@ -228,7 +228,7 @@ Here is a possible implementation of a page table entry (32 bits per entry):
 
 **Physical Page Offset X/Y:** Points to the lower-left corner of the physical page in memory. Reconstructing the texel index is done using `Physical Page Offset X/Y * ivec2(128)` where 128 represents texels per page in the x/y direction.
 
-**Memory Pool Index:** This technique works by allocating physical memory from a series of sparse memory pools. When one memory pool has no remaining free memory for this frame, the allocator moves to the next pool. Under the hood the physical backing memory is a sparse 2D texture array and the memory pool index refers to which array slice the physical page is in.
+**Memory Pool Index:** This technique works by allocating physical memory from a series of either sparse or shared texture memory pools. In the case of sparse textures, the API allows for making pages resident or non-resident and doing sparse texture binding. In the case of shared texture memory, fixed-size textures are allocated from and returned to the shared texture pool as needed. The memory pool index can either refer to the array index (when using sparse texture arrays) or the texture index (when using separate textures pulled from a shared pool).
 
 **Residency Status:** Tells the allocator whether a page is backed by physical memory or not.
 
@@ -236,7 +236,7 @@ Here is a possible implementation of a page table entry (32 bits per entry):
 
 ### ClipMap Matrix Structure
 
-At this stage we need to define a clear way of converting from world coordinates to virtual page coordinates and then to physical texel coordinates. To do this we are going to define two different groups of matrices: projection-view sample and projection-view render. Each frame the projection-view render matrix will potentially change via translation and represents the clip origin + extent, but the projection-view sample matrix will either never change or very rarely change (depending on your use case). The sample matrix is used to get virtual uv coords that we can use to access the page table. The render matrix is used when rendering the shadow map using normal hardware rasterization.
+At this stage we need to define a clear way of converting from world coordinates to virtual page coordinates and then to physical texel coordinates. To do this we are going to define two different groups of matrices: projection-view sample and projection-view render. Each frame the projection-view render matrix will potentially change via translation and represents the clip origin + extent, but the projection-view sample matrix will either never change or very rarely change (depending on your use case). The sample matrix is used to get virtual uv coords that we can use to access the page table and so its origin will be set to **(0, 0, 0)**. The render matrix is used when rendering the shadow map using normal hardware rasterization and its origin changes as the camera moves through the scene.
 
 Once we have these two groups of matrices, the steps of moving from virtual to physical are as follows:
 
@@ -264,7 +264,7 @@ $$
 $$
 
 
-Where $$d_k$$ is the maximum view-space extent of the first clipmap cascade and $z$ is the maximum depth. Each cascade after the first maintains the same maximum depth but doubles the extent ($$d_k$$). Because of this, only the first matrix needs to be passed into the shader and the rest can be derived.
+Where $$d_k$$ is the maximum view-space extent of the first clipmap cascade and $$z$$ is the maximum depth. Each cascade after the first maintains the same maximum depth but doubles the extent ($$d_k$$). Because of this, only the first matrix needs to be passed into the shader and the rest can be derived.
 
 The global clip origin **(0, 0, 0)** view-projection matrix is created by multiplying the orthographic projection above with the rotation-only directional light view matrix.
 
@@ -586,10 +586,24 @@ Each implementation will need to decide how to deal with the case of a memory po
 
 The decision for when to evict a page from the cache is also configurable. The page table has enough bits to count to 15 frames as a delay for evicting a page from the cache, but by default it marks pages free as soon as they are no longer required for a given frame (no delay). The only reason to keep pages in the cache for longer than 1 frame when they aren't being requested is for the situation where the camera pans around, then turns back to face where it was originally facing. In this case the pages it was looking at originally would still be around and not have to be rendered.
 
-For implementing a sparse allocation strategy with graphics API support, see the following:
+### Hardware/API Sparse Memory
+
+OpenGL, Vulkan and DirectX all have dedicated API support for hardware sparse memory allocation.
+
 * [Sparse Textures OpenGL](https://gpuopen.com/learn/sparse-textures-opengl/)
 * [Sparse Resources Vulkan](https://registry.khronos.org/vulkan/site/spec/latest/chapters/sparsemem.html)
 * [Tiled Resources DirectX](https://learn.microsoft.com/en-us/windows/win32/direct3d11/tiled-resources)
+
+The main issue is that even though these are supported, there have been reports of major issues with performance especially on Windows. For example:
+
+* [vkQueueBindSparse is insanely slow](https://www.reddit.com/r/vulkan/comments/bw3wib/vkqueuebindsparse_is_insanely_slow/)
+* [Sparse texture binding is painfully slow](https://forums.developer.nvidia.com/t/sparse-texture-binding-is-painfully-slow/259105)
+
+Your mileage may vary and will require profiling for the target hardware and OS/drivers.
+
+### Software Sparse Memory
+
+In the absence of good support for hardware/API sparse memory, the main alternative is to fallback to regular textures and texture arrays. Each texture will have a fixed power of 2 size and be capable of representing some number of physical `128x128` texel pages. These textures can be allocated from and returned to a shared texture memory pool as needed.
 
 # Shadow Render Budget
 
