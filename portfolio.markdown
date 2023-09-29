@@ -20,13 +20,15 @@ layout: home
 
 (3D Model: Intel Sponza)
 
-![sanmiguel1](/assets/v0.10/FinalAfterPostProcessing.png)
+![sanmiguel1](/assets/v0.11/SanMiguel_VSM_GI.png)
 
 ![sanmiguel2](/assets/v0.10/SanMiguel_Balcony2.png)
 
+![sanmiguel3](/assets/v0.11/SanMiguel_VSM_GI2.png)
+
 (3D Model: San Miguel)
 
-![bistro](/assets/v0.10/Bistro1.png)
+![bistro](/assets/v0.11/Bistro_VSM_GI.png)
 
 (3D Model: Bistro)
 
