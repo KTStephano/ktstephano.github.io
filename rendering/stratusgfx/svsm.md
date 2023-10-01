@@ -10,8 +10,8 @@ use_math: true
 
 The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the physical memory pages (squares) where each color represents a different shadow clipmap/cascade.
 
-**This is a WIP/rough draft!**
-**Last edited: Sept 24, 2023.**
+**This is a WIP/rough draft! Feedback is greatly appreciated.**
+**Last edited: Oct 1, 2023**
 
 # Collaborators
 
@@ -26,7 +26,7 @@ This was developed in loose collaboration with:
 
 # Introduction
 
-This post goes through the high-level steps needed to create a sparse virtual memory system for realtime shadows. This was inspired by Unreal Engine 5's virtual shadow maps. Directional lights are the only ones considered here, but it should be possible to extend the system to support other light types such as point or spotlights. 
+This post goes through the high-level steps needed to create a sparse virtual memory system for realtime shadows. This was inspired by Unreal Engine 5's virtual shadow maps. Directional lights are the only ones considered here, but it is possible to extend the system to support other light types such as point or spotlights. 
 
 The directional shadows make use of clipmaps for incremental updating of the shadowmaps and handling multiple different cascades. Each clipmap cascade can be set to very high virtual resolutions such as 4K, 8K or 16K.
 
@@ -54,6 +54,10 @@ The motivations for using this approach fall into two categories:
 An important aspect mentioned in the introduction is that if a cascade doesn't have much geometry inside of it, processing overhead and memory footprint for that cascade can be reduced close to 0. This opens the possibility of maintaining 10, 15 or even 20 cascades. In addition, if the virtual resolution is set to 8K or 16K, every cascade gets its own 8K or 16K virtual shadow map. This allows for high quality, consistent shadows that cover huge world distances.
 
 Standard cascaded shadow maps (CSMs) struggle to handle this without heavy optimization. In many ways sparse virtual shadow maps are an extension of CSMs with the optimizations required to improve memory usage, increase resolution, cover even larger max distances, and avoid duplicate shadow reprocessing for data that hasn't changed since last frame.
+
+### Other Light Types
+
+Even though this article focuses on directional lights, it is possible to virtualize other light types such as point or spotlights. To do this, the shadow maps for each light which use fixed texture allocations will be replaced with virtual shadow textures that are mostly sparse. For point lights this would result in 6 virtual textures (virtual cubemap) each with virtual mipmaps while spotlights would only need 1 virtual texture with virtual mipmaps. Physical backing memory for the virtual shadow textures of all the different light types can come from the same shared texture memory pool.
 
 # Foundations
 
@@ -87,15 +91,19 @@ Directional light shadow maps are represented by a series of expanding rings aro
 
 A clipmap is an incrementally updatable, fixed-size texture region that is meant to represent a subset of a full texture's mipmap chain. A clipmap is defined by a clip origin and a clip size. Together these two determine which part of the full texture that the clipmap currently represents. As the clip origin shifts from frame to frame, new data is streamed in and old data streamed out along the borders of the texture. 
 
-Each clipmap ring is required to cover double the area of the previous clipmap ring meaning that each successive ring is coarser/lower resolution than the previous since the memory footprint remains the same. Because coarser clipmap rings fully overlap finer clipmap rings, we can imagine them as being a version of texture mipmapping.
+Each clipmap ring is required to cover double the area of the previous clipmap ring meaning that each successive ring is coarser/lower resolution than the previous since the memory footprint remains the same for each ring regardless of how much area they cover. Because coarser clipmap rings fully overlap finer clipmap rings, we can conceptualize them as being a version of texture mipmapping.
 
 ![clipmap](/assets/v0.11/svsms/VSM_Clipmap.png)
 
-When sampling from a clipmap, we select the most detailed (lowest ring/cascade) that's available. If not available, we clip to the next best fit.
+![clipmap2](/assets/v0.11/svsms/VSM_Clipmaps_As_Mipmaps.png)
+
+When sampling from a clipmap, we select the most detailed (lowest ring/cascade) that's available. If not available, we clip to the next best fit. Later on this article will discuss the configurable shadow render budget which can lead to situations where we have to fallback to lower resolution data while higher resolution data is processed over multiple frames.
 
 For shadow mapping, we can imagine that the "true" shadow map is something massive like 128K x 128K or more. As the player camera moves around, we will shift the clip origin to match the new camera location and update only the parts that changed.
 
 ![clipshift](/assets/v0.11/svsms/VSM_ClipOrigin.png)
+
+The arrow in the above picture is a 2-component motion vector. If converted to NDC space, it can be used to project from current frame to previous frame or vice versa in order to determine which virtual pages have changed.
 
 ![clipupdate](/assets/v0.11/svsms/VSM_ClipUpdate.png)
 
@@ -226,7 +234,7 @@ Here is a possible implementation of a page table entry (32 bits per entry):
 
 **Frame Marker:** Used for marking the page table entry as in use. 0 means unmarked, 1 means marked this frame, and anything greater than 1 means it was marked a few frames ago but is not currently needed for this frame. This is useful if you want to add a slight frame delay before evicting something from the cache.
 
-**Physical Page Offset X/Y:** Points to the lower-left corner of the physical page in memory. Reconstructing the texel index is done using `Physical Page Offset X/Y * ivec2(128)` where 128 represents texels per page in the x/y direction.
+**Physical Page Index X/Y:** Points to the lower-left corner of the physical page in memory. Reconstructing the lower-left physical texel from the page index is done using `Physical Page Index X/Y * ivec2(128)` where 128 represents texels per page in the x/y direction.
 
 **Memory Pool Index:** This technique works by allocating physical memory from a series of either sparse or shared texture memory pools. In the case of sparse textures, the API allows for making pages resident or non-resident and doing sparse texture binding. In the case of shared texture memory, fixed-size textures are allocated from and returned to the shared texture pool as needed. The memory pool index can either refer to the array index (when using sparse texture arrays) or the texture index (when using separate textures pulled from a shared pool).
 
@@ -584,7 +592,7 @@ In the following gif the lower left shows the first memory pool as it pulls page
 
 Each implementation will need to decide how to deal with the case of a memory pool running out of memory during a given frame. It's possible that more pages will be requested than a single memory pool can handle. One approach would be to trigger a page fault like normal, but the CPU could then allocate a whole new block to pull memory from. Another approach would be to evict pages corresponding to coarser cascades and prioritize putting them in the cascades closer to the camera.
 
-The decision for when to evict a page from the cache is also configurable. The page table has enough bits to count to 15 frames as a delay for evicting a page from the cache, but by default it marks pages free as soon as they are no longer required for a given frame (no delay). The only reason to keep pages in the cache for longer than 1 frame when they aren't being requested is for the situation where the camera pans around, then turns back to face where it was originally facing. In this case the pages it was looking at originally would still be around and not have to be rendered.
+The decision for when to evict a page from the cache is also configurable. The page table has enough bits to count to 15 frames as a delay for evicting a page from the cache, but by default it marks pages free as soon as they are no longer required for a given frame (no delay). One reason to keep them around a longer even when not directly visible is if they are requested by a postprocessing effect. In that situation it is a good idea to only keep the lowest resolution version of the data that the post processing effect needs while freeing other levels.
 
 ### Hardware/API Sparse Memory
 
