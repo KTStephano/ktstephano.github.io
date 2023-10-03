@@ -18,11 +18,11 @@ All scenes have been rendered in realtime on an Nvidia GTX 1060.
 
 # How A Frame Is Rendered
 
-The graphics engine makes heavy use of programmable vertex pulling with bindless resources. This allows for just a few large GPU buffers to be used to store all mesh data, material data and draw indices that all draw commands can reference.
+The graphics engine uses a GPU-driven pipeline that makes heavy use of programmable vertex pulling, multi-draw indirect and bindless resources. This allows for just a few large GPU buffers to be used to store all mesh data, material data and draw indices that all draw commands can reference. The draw commands themselves are stored in GPU memory meaning that the GPU itself can generate and modify its own draw commands that will later be submitted to the render queue.
 
-Bindless resources mean that the renderer can determine at the start of the frame which textures need to be used (shadow maps, diffuse maps, normal maps, etc.) and ensure that they are all made resident on the GPU before any draw calls are made.
+Bindless resources mean that the renderer can determine at the start of the frame which textures need to be used (shadow maps, diffuse maps, normal maps, etc.) and ensure that they are all made resident on the GPU before any draw calls are made. The material data buffer contains handles that are used to reference these resident textures.
 
-These two approaches enable a very important optimization technique known as draw call merging. For example, the renderer can batch up all static opaque meshes into one render queue and then dispatch them with one call to glMultiDrawElementsIndirect. This also makes it possible to cache previously generated render queues and reuse them in future frames if nothing has changed.
+This GPU-driven, bindless pipeline allows for another optimization technique known as draw call merging. For example, the renderer can batch up all commands that have similar render settings into one command buffer and then dispatch them with a single multi-draw indirect call. This also makes it possible to cache previously generated command buffers and reuse them in future frames if nothing has changed.
 
 Another interesting opportunity is also created by using this approach. Since all materials and their textures are made resident at the start of the frame, any shader at any stage can access any material property or texture that they might need without having to add in new C++ code to make them available to that shader. This makes adding new shaders that work on different parts of the data very easy.
 
