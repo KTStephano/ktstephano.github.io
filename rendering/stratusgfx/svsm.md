@@ -588,8 +588,6 @@ An easy way to handle allocation for this virtual memory system is to pack a lis
 
 In the following gif the lower left shows the first memory pool as it pulls pages from the free list or adds them back. Black = unallocated.
 
-<img src="/assets/v0.11/svsms/VSM_Allocator.gif" alt="allocator" />
-
 Each implementation will need to decide how to deal with the case of a memory pool running out of memory during a given frame. It's possible that more pages will be requested than a single memory pool can handle. One approach would be to trigger a page fault like normal, but the CPU could then allocate a whole new block to pull memory from. Another approach would be to evict pages corresponding to coarser cascades and prioritize putting them in the cascades closer to the camera.
 
 The decision for when to evict a page from the cache is also configurable. The page table has enough bits to count to 15 frames as a delay for evicting a page from the cache, but by default it marks pages free as soon as they are no longer required for a given frame (no delay). One reason to keep them around a longer even when not directly visible is if they are requested by a postprocessing effect. In that situation it is a good idea to only keep the lowest resolution version of the data that the post processing effect needs while freeing other levels.
@@ -612,6 +610,12 @@ Your mileage may vary and will require profiling for the target hardware and OS/
 ### Software Sparse Memory
 
 In the absence of good support for hardware/API sparse memory, the main alternative is to fallback to regular textures and texture arrays. Each texture will have a fixed power of 2 size and be capable of representing some number of physical `128x128` texel pages. These textures can be allocated from and returned to a shared texture memory pool as needed.
+
+### Allocation Strategy Comparison
+
+<img src="/assets/v0.11/svsms/VSM_AllocationStrategy.gif" alt="allocator" />
+
+Hardware sparse leverages driver/API sparse memory management+binding support. Software sparse manages memory manually and allocates from fixed-size texture pools.
 
 # Shadow Render Budget
 
