@@ -40,7 +40,7 @@ This system replaces normal shadow map uv coordinates with virtual uv coordinate
 
 ### Caching
 
-As the camera moves around the scene, new virtual pages become visible and are rendered incrementally. Previously rendered pages that are still visible and haven't changed can be reused from frame to frame to save on performance.
+As the camera moves around the scene, new virtual pages become visible and are rendered incrementally. Previously rendered pages that are still visible and haven't changed can be reused from frame to frame to save on performance. For either debugging purposes or to make it easier to build an initial prototype, caching can be disabled or skipped in favor of being added later.
 
 # Motivation and Comparison
 
@@ -91,7 +91,7 @@ Directional light shadow maps are represented by a series of expanding rings aro
 
 A clipmap is an incrementally updatable, fixed-size texture region that is meant to represent a subset of a full texture's mipmap chain. A clipmap is defined by a clip origin and a clip size. Together these two determine which part of the full texture that the clipmap currently represents. As the clip origin shifts from frame to frame, new data is streamed in and old data streamed out along the borders of the texture. 
 
-Each clipmap ring is required to cover double the area of the previous clipmap ring meaning that each successive ring is coarser/lower resolution than the previous since the memory footprint remains the same for each ring regardless of how much area they cover. Because coarser clipmap rings fully overlap finer clipmap rings, we can conceptualize them as being a version of texture mipmapping.
+Each clipmap ring is required to cover double the area of the previous clipmap ring. This means that each successive ring is coarser/lower resolution than the previous since the memory footprint remains the same for each ring regardless of how much area they cover. Because coarser clipmap rings fully overlap finer clipmap rings, we can conceptualize them as being a version of texture mipmapping.
 
 ![clipmap](/assets/v0.11/svsms/VSM_Clipmap.png)
 
