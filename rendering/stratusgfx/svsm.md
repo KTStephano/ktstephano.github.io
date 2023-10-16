@@ -166,6 +166,8 @@ With this setup, if the GPU wrote a negative page coordinate to the buffer it is
 
 Once there is valid memory, control can be returned to the GPU so that it can clear all dirty pages since they are now backed by physical memory.
 
+**Note:** It is possible to reduce the need for most readback situations if a full (or close to full) GPU-driven SVSM implementation is used. In this scenario the physical backing memory is a fixed size 2D texture pool pre-allocated during initialization and made available to shaders with a bindless approach. The GPU can then manage its own allocations.
+
 ### Step 4: Compute Screen Bounds
 ![step4](/assets/v0.11/svsms/VSM_Step4.png)
 
