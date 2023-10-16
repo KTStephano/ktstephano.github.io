@@ -11,7 +11,7 @@ use_math: true
 The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the physical memory pages (squares) where each color represents a different shadow clipmap/cascade.
 
 **This is a WIP/rough draft! Feedback is greatly appreciated.**
-**Last edited: Oct 3, 2023**
+**Last edited: Oct 16, 2023**
 
 # Collaborators
 
@@ -111,6 +111,10 @@ The new data wraps around and is written to the region where the old, no longer 
 
 Since this method focuses on using hardware rasterization, some amount of duplicate work will be done during the update. This means that there will be cases where parts of the green areas will be re-generated. Some possible approaches to reducing this will be discussed later.
 
+# Physical Memory Format
+
+The physical backing memory can be created as a 32-bit floating point texture. Depending on which operation is being done (read vs write), the texture may be converted to a compatible format that is more convenient for us to use. Later in this article this will be done during shadow map rendering where we bind it as a 32-bit unsigned integer image in order to gain access to image atomic min/max.
+
 # Method Overview
 
 ![overview](/assets/v0.11/svsms/VSM_Overview.png)
@@ -179,7 +183,9 @@ Using the screen bounds computed in **step 4**, objects can be culled per cascad
 *Helpful Resources:*
 * [Matrix Setup For Tiled Rendering](https://stackoverflow.com/questions/28155749/opengl-matrix-setup-for-tiled-rendering)
 
-To do this we first have to augment each cascade's ViewProjection matrix to only encompass the screen bounds computed in **step 4**. This will enable us to render the part that changed and skip what didn't much more effectively which matches up with the description of a clip map given above. To do this the matrix can be split into tiles and fractionally translated so that we can set the viewport size to be exactly the **step 4** bounds.
+During rendering, even though the rasterizer hardware is being used we are going to have to disable the normal render target so that we can manually write the depth to the texture. This has the unfortunate side effect of disabling the possibility of early z fragment discard. Instead we need to bind the physical backing texture (created as 32-bit float) as a 32-bit unsigned integer image which should be one of the compatible image format conversions. This will allow us to convert float depth values to unsigned int using `floatBitsToUint` and then write to the texture with `imageAtomicMin` (GLSL).
+
+Next we can augment each cascade's ViewProjection matrix to only encompass the screen bounds computed in **step 4**. This will enable us to render the part that changed and skip what didn't much more effectively which matches up with the description of a clip map given above. To do this the matrix can be split into tiles and fractionally translated so that we can set the viewport size to be exactly the **step 4** bounds.
 
 If we have a page table that is 64x64, this means we also have 64x64 screen tiles. NDC space goes from **[-1, 1]** meaning it is 2 units wide, high and deep. This means each tile is 2/64 = 1/32 units in size. What we can do is sum up the number of tiles we want to render in the X and Y directions and merge them into larger groups. Here is some pseudocode that will do that:
 
