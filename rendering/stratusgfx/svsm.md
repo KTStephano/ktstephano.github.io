@@ -110,7 +110,7 @@ The arrow in the above picture is a 2-component motion vector. If converted to N
 
 The new data wraps around and is written to the region where the old, no longer needed data used to be.
 
-It's important to keep in mind that with the virtual memory system this article outlines, each clipmap has access to the full virtual texture coordinate space. It is as if each clipmap had its own 4K, 8K or 16K texture even though most of it is not backed by physical memory. Since this method focuses on using hardware rasterization, some amount of duplicate work will be done during the update. This means that there will be cases where parts of the green areas will be re-generated. Some possible approaches to reducing this will be discussed later.
+It's important to keep in mind that with the virtual memory system this article outlines, each clipmap has access to the full virtual texture coordinate space. It is as if each clipmap has its own 4K, 8K or 16K texture even though most of it is not backed by physical memory. Since this method focuses on using hardware rasterization, some amount of duplicate work will be done during the update. This means that there will be cases where parts of the green areas will be re-generated. Some possible approaches to reducing this will be discussed later.
 
 # Physical Memory Format
 
