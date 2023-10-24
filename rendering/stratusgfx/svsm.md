@@ -627,11 +627,23 @@ Hardware sparse leverages driver/API sparse memory management+binding support. S
 
 # Physical Memory Limits
 
-Each implementation will need to decide how to deal with the case of a memory pool running out of memory during a given frame. It's possible that more pages will be requested than a single memory pool can handle. One approach would be to trigger a page fault like normal, but the CPU could then allocate a whole new block to pull memory from. Another approach would be to evict pages corresponding to coarser cascades and prioritize putting them in the cascades closer to the camera.
+Each implementation will need to decide how to deal with the case of a memory pool running out of memory during a given frame. It's possible that more pages will be requested than a single memory pool can handle. One approach would be to trigger a page fault like normal, then allow the CPU to allocate a whole new block to pull memory from. For example, say each pool is a 1024x1024 2D texture (8 pages x 8 pages). If that pool runs out, the CPU could reserve another 1024x1024 pool and begin allocating from that. This could continue until some maximum upper bound is reached (either configued by the app or dictated by available VRAM). It would also be an option to later free that texture pool if none of the pages from it are currently referenced.
 
-The decision for when to evict a page from the cache is also configurable. The page table has enough bits to count to 15 frames as a delay for evicting a page from the cache, but by default it marks pages free as soon as they are no longer required for a given frame (no delay). One reason to keep them around a longer even when not directly visible is if they are requested by a postprocessing effect. In that situation it is a good idea to only keep the lowest resolution version of the data that the post processing effect needs while freeing other levels.
+Another approach would be to have a fixed-size texture pool that never grows or shrinks and evict pages corresponding to coarser cascades and prioritize putting them in the cascades closer to the camera. This would mean that if the current frame runs out of physical memory, it could rebalance the pages that will be rendered based on which ones are the highest priority (finer cascades) vs lower priority (coarser cascades).
 
-Another approach which could be very difficult to optimize performance but would guarantee each clipmap would have access to the full physical memory pool would be to handle allocation, rendering and shading in a loop over each clipmap. It would look something like `Select clipmap X -> Mark pages required for clipmap X -> Render shadows into memory -> Shade parts of screen covered by clipmap X -> Repeat for next clipmap until render budget is exceeded or all clipmaps processed`.
+Another approach would be to process each clipmap separately all the way through final shading by selecting the clipmap, allocating memory, rendering shadows, shading, moving to next clipmap. This could be very difficult to optimize the performance of, but it would guarantee that each clipmap would have access to all available physical memory if required. It would look something like:
+
+1) Preprocess: Analyze depth and mark pages required for all clipmaps
+
+2) Select clipmap
+
+3) Allocate memory for any requested pages in (1) that aren't already backed by phyiscal memory
+
+4) Render shadows for uncached pages
+
+5) Perform shading on any parts of the scene covered by this clipmap
+
+6) Go back to (2) for next clipmap
 
 # Shadow Render Budget
 
