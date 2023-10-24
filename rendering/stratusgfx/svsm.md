@@ -11,7 +11,7 @@ use_math: true
 The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the physical memory pages (squares) where each color represents a different shadow clipmap/cascade.
 
 **This is a WIP/rough draft! Feedback is greatly appreciated.**
-**Last edited: Oct 16, 2023**
+**Last edited: Oct 24, 2023**
 
 # Collaborators
 
@@ -26,7 +26,7 @@ This was developed in loose collaboration with:
 
 # Introduction
 
-This post goes through the high-level steps needed to create a sparse virtual memory system for realtime shadows. This was inspired by Unreal Engine 5's virtual shadow maps. Directional lights are the only ones considered here, but it is possible to extend the system to support other light types such as point or spotlights. 
+This post goes through the high-level steps needed to create a virtual memory system for realtime shadows. This was inspired by Unreal Engine 5's virtual shadow maps. Directional lights are the only ones considered here, but it is possible to extend the system to support other light types such as point or spotlights. 
 
 The directional shadows make use of clipmaps for incremental updating of the shadowmaps and handling multiple different cascades. Each clipmap cascade can be set to very high virtual resolutions such as 4K, 8K or 16K.
 
@@ -113,7 +113,7 @@ Since this method focuses on using hardware rasterization, some amount of duplic
 
 # Physical Memory Format
 
-The physical backing memory can be created as a 32-bit floating point texture. Depending on which operation is being done (read vs write), the texture may be converted to a compatible format that is more convenient for us to use. Later in this article this will be done during shadow map rendering where we bind it as a 32-bit unsigned integer image in order to gain access to image atomic min/max.
+The physical backing memory can be created as a 32-bit floating point texture. Depending on which operation is being done (read vs write), the texture may be converted to a compatible format that is more convenient for us to use. The main example in this article is during shadow map rendering where we bind it as a 32-bit unsigned integer image in order to gain access to image atomic min/max.
 
 # Method Overview
 
@@ -178,7 +178,7 @@ You'll notice that some pages marked 0 are included in the page bounds. This rep
 ### Step 5: Cull Objects
 ![step5](/assets/v0.11/svsms/VSM_Culling.png)
 
-Using the screen bounds computed in **step 4**, objects can be culled per cascade. To do this project their AABBs into NDC space using the render ViewProjection matrix for each cascade. This will give better-than-nothing results, but to get much better results something more advanced such as Hierarchical Depth Buffer (HZB) culling can be used.
+Using the screen bounds computed in **step 4**, objects can be culled per cascade. To do this project their AABBs into NDC space using the render ViewProjection matrix for each cascade. This will give better-than-nothing results. Better results can be gained by using a hierarchical culling structure based on depth or based on information about residency/cache status from the page table.
 
 ### Step 6: Render To Physical Memory
 ![step6](/assets/v0.11/svsms/VSM_Step5.png)
@@ -266,7 +266,7 @@ Once we have these two groups of matrices, the steps of moving from virtual to p
 
 5) Access physical texture with physical uv coordinates for either sampling or writing
 
-#### Projection View Sample (address translation)
+#### Projection View Sample (stable virtual addressing)
 
 We are going to define the projection view sample matrix as being positioned at **(0, 0, 0)** and set up the light orthographic projection matrix as follows:
 
@@ -453,6 +453,9 @@ The final step is to convert these coordinates to actual physical coordinates th
             float(memoryPoolIndex)
         );
 {% endhighlight %}
+
+![mapping](/assets/v0.11/svsms/VirtualMapping.png)
+(visual of above mapping code)
 
 And we're done! We now have a way to convert from world space coordinates -> virtual coordinates -> physical memory coordinates. If we revisit the rendering **step 6** from above, what this means is that we will use `newProjectionViewRender` for each cascade to rasterize the scene. For each fragment that we generate we want to convert it to physical coordinates and write the depth to that location.
 
