@@ -12,7 +12,7 @@ The top is the Bistro scene rendered with multiple 8K resolution sparse virtual 
 
 **This is a WIP/rough draft! Feedback is greatly appreciated.**
 
-**Last edited: Oct 24, 2023**
+**Last edited: Oct 25, 2023**
 
 # Collaborators
 
@@ -110,7 +110,7 @@ The arrow in the above picture is a 2-component motion vector. If converted to N
 
 The new data wraps around and is written to the region where the old, no longer needed data used to be.
 
-It's important to keep in mind that with the virtual memory system this article outlines, each clipmap has access to the full virtual texture resolution. It is as if each clipmap has its own 4K, 8K or 16K texture even though most of it is not backed by physical memory. Since this method focuses on using hardware rasterization, some amount of duplicate work will be done during the update. This means that there will be cases where parts of the green areas will be re-generated. Some possible approaches to reducing this will be discussed later.
+It's important to keep in mind that with the virtual memory system this article outlines, each clipmap has access to the full virtual texture resolution. It is as if each clipmap has its own 4K, 8K or 16K texture even though most of it is not backed by physical memory.
 
 # Physical Memory Format
 
@@ -179,7 +179,7 @@ You'll notice that some pages marked 0 are included in the page bounds. This rep
 ### Step 5: Cull Objects
 ![step5](/assets/v0.11/svsms/VSM_Culling.png)
 
-Using the screen bounds computed in **step 4**, objects can be culled per cascade. To do this project their AABBs into NDC space using the render ViewProjection matrix for each cascade. This will give better-than-nothing results. Better results can be gained by using a hierarchical culling structure based on depth or based on information about residency/cache status from the page table.
+Using the screen bounds computed in **step 4**, objects can be culled per cascade. To do this project their AABBs into NDC space using the render ViewProjection matrix for each cascade. This will give better-than-nothing results. Better results can be gained by using a hierarchical culling structure based on depth or based on information about residency/cache status from the page table. A hierarchical depth structure can be used to determine if an object is likely occluded by another object, while a hierarchical page structure can be used to determine if an object overlaps one or more resident yet uncached pages.
 
 ### Step 6: Render To Physical Memory
 ![step6](/assets/v0.11/svsms/VSM_Step5.png)
