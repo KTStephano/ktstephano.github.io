@@ -12,7 +12,7 @@ The top is the Bistro scene rendered with multiple 8K resolution sparse virtual 
 
 **This is a WIP/rough draft! Feedback is greatly appreciated.**
 
-**Last edited: Oct 25, 2023**
+**Last edited: Oct 29, 2023**
 
 # Collaborators
 
@@ -88,7 +88,7 @@ Sparse virtual shadow mapping borrows all these ideas with one exception: page f
 *Helpful resources:*
 * [The Clipmap: A Virtual Mipmap](https://dl.acm.org/doi/pdf/10.1145/280814.280855)
 
-Directional light shadow maps are represented by a series of expanding rings around the player camera known as clipmap rings/cascades. Conceptually they are similar to cascades in cascaded shadow maps.
+Directional light shadow maps are represented by a series of expanding rings around the player camera known as clipmap rings. Conceptually they are similar to cascades in cascaded shadow maps.
 
 A clipmap is an incrementally updatable, fixed-size texture region that is meant to represent a subset of a full texture's mipmap chain. A clipmap is defined by a clip origin and a clip size. Together these two determine which part of the full texture that the clipmap currently represents. As the clip origin shifts from frame to frame, new data is streamed in and old data streamed out along the borders of the texture. 
 
@@ -98,7 +98,7 @@ Each clipmap ring is required to cover double the area of the previous clipmap r
 
 ![clipmap2](/assets/v0.11/svsms/VSM_Clipmaps_As_Mipmaps.png)
 
-When sampling from a clipmap, we select the most detailed (lowest ring/cascade) that's available. If not available, we clip to the next best fit. Later on this article will discuss the configurable shadow render budget which can lead to situations where we have to fallback to lower resolution data while higher resolution data is processed over multiple frames.
+When sampling from a clipmap, we select the most detailed (lowest clipmap ring) that's available. If not available, we clip to the next best fit. Later on this article will discuss the configurable shadow render budget which can lead to situations where we have to fallback to lower resolution data while higher resolution data is processed over multiple frames.
 
 For shadow mapping, we can imagine that the "true" shadow map is something massive like 128K x 128K or more. As the player camera moves around, we will shift the clip origin to match the new camera location and update only the parts that changed.
 
@@ -146,7 +146,7 @@ Here is some pseudocode:
 ### Step 2: Consult Page Tables
 ![step2](/assets/v0.11/svsms/VSM_Step2.png)
 
-After **step 1** has marked all the needed page tables for this frame, we can check each page table entry to see if extra work needs to be done such as allocation, deallocation or marking for rendering. Each cascade will have its own page table since each cascade has access to the full virtual shadow map resolution. For example, if we decide we want to use 8K x 8K resolution with 6 cascades, we will have 6 8K x 8K virtual textures which are allocated from a shared physical memory pool.
+After **step 1** has marked all the needed page tables for this frame, we can check each page table entry to see if extra work needs to be done such as allocation, deallocation or marking for rendering. Each clipmap will have its own page table since each clipmap has access to the full virtual shadow map resolution. For example, if we decide we want to use 8K x 8K resolution with 6 clipmap, we will have 6 8K x 8K virtual textures which are allocated from a shared physical memory pool.
 
 If the virtual page is already backed by a valid piece of physical memory that is up to date, no further processing is needed.
 
@@ -179,20 +179,29 @@ You'll notice that some pages marked 0 are included in the page bounds. This rep
 ### Step 5: Cull Objects
 ![step5](/assets/v0.11/svsms/VSM_Culling.png)
 
-Using the screen bounds computed in **step 4**, objects can be culled per cascade. To do this project their AABBs into NDC space using the render ViewProjection matrix for each cascade. This will give better-than-nothing results. Better results can be gained by using a hierarchical culling structure based on depth or based on information about residency/cache status from the page table. A hierarchical depth structure can be used to determine if an object is likely occluded by another object, while a hierarchical page structure can be used to determine if an object overlaps one or more resident yet uncached pages.
+Using the screen bounds computed in **step 4**, objects can be culled per clipmap. To do this project their AABBs into NDC space using the render ViewProjection matrix for each clipmap. This will give better-than-nothing results. Better results can be gained by using a hierarchical culling structure based on depth or based on information about residency/cache status from the page table. A hierarchical depth structure can be used to determine if an object is likely occluded by another object, while a hierarchical page structure can be used to determine if an object overlaps one or more resident yet uncached pages.
 
 ### Step 6: Render To Physical Memory
 ![step6](/assets/v0.11/svsms/VSM_Step5.png)
-*Helpful Resources:*
+
+There are two ways to render the shadow map depending on the approach you take (software sparse vs hardware sparse). The difference is that with software sparse the application performs all memory management manually whereas with hardware sparse the driver tracks all memory residency and can perform optimizations not possible with software sparse.
+
+The first method is to do a manual depth write to the physical texture. This can be used with both software sparse or hardware sparse, but it has the unfortunate side effect of disabling early z fragment discard. The way it works is that the physical backing texture is bound as an image to the fragment stage. The image will be bound as a 32-bit unsigned integer image which is one of the compatible 32-bit image format conversions. This will give access to image atomics which are only guaranteed to be available for signed and unsigned integer types. The fragment shader can then be given a set of virtual uv coordinates. The depth value for the fragment is first converted to its representation in bits using something like `floatBitsToUint`. From here it will translate the virtual uv coordinates to physical uv coordinates and then perform an `imageAtomicMin` operation to write the depth.
+
+The second method becomes available if using hardware sparse and requires API and driver support (more on this later). If you opt to make each shadow's texture a hardware-managed sparse texture, you can use that as a framebuffer depth render target. This will mean that instead of using image atomics you will allow the hardware to write the depth value itself like with normal rendering. With this approach, early z fragment discard becomes available once again. With hardware sparse all resident and non-resident pages are tracked by the driver and it can automatically discard any fragments that fall within non-resident pages.
+
+This is the end of the high level overview of the virtual shadow rendering pipeline. The rest of the article will go into more specific details about certain technical aspects of the implementation and also go over some of the difficulties that are encountered.
+
+# Modifying Virtual Viewport Matrices
+
+*Helpful Resource:*
 * [Matrix Setup For Tiled Rendering](https://stackoverflow.com/questions/28155749/opengl-matrix-setup-for-tiled-rendering)
 
-During rendering, even though the rasterizer hardware is being used we are going to have to disable the normal render target so that we can manually write the depth to the texture. This has the unfortunate side effect of disabling the possibility of early z fragment discard. Instead we need to bind the physical backing texture (created as 32-bit float) as a 32-bit unsigned integer image which should be one of the compatible image format conversions. This will allow us to convert float depth values to unsigned int using `floatBitsToUint` and then write to the texture with `imageAtomicMin` (GLSL) in the fragment/pixel shader.
+**Note:** Depending on how good your object culling is, this might not be needed. What it does is help reduce the size of viewport that is being rendered to in order to offset any false positives that the culling algorithm produces. The less false positives there are, the less there is a need for viewport bounds changes. However, it could still be useful as a tool for implementing per-frame shadow render budgets by only updating parts of the virtual viewport and saving the rest for later.
 
-Next we can augment each cascade's ViewProjection matrix to only encompass the screen bounds computed in **step 4**. This will enable us to render the part that changed and skip what didn't much more effectively which matches up with the description of a clip map given above. To do this the matrix can be split into tiles and fractionally translated so that we can set the viewport size to be exactly the **step 4** bounds.
+We can augment each clipmap's ViewProjection matrix to only encompass the screen bounds computed in **step 4**. This will enable us to render the part that changed and skip what didn't much more effectively. To do this the matrix can be split into tiles and fractionally translated so that we can set the viewport size to be exactly the **step 4** bounds.
 
 If we have a page table that is 64x64, this means we also have 64x64 screen tiles. NDC space goes from **[-1, 1]** meaning it is 2 units wide, high and deep. This means each tile is 2/64 = 1/32 units in size. What we can do is sum up the number of tiles we want to render in the X and Y directions and merge them into larger groups. Here is some pseudocode that will do that:
-
-**Note:** Depending on how good your object culling is, this step may end up being unnecessary. What it does is help reduce the size of viewport that is being rendered to in order to offset any false positives that the culling algorithm produces. The less false positives there are, the less there is a need for viewport bounds changes.
 
 {% highlight cpp %}
     // Index of the min and max screen tiles we want to render
@@ -226,10 +235,10 @@ Once we've done this, the last part is to augment our ViewProjection matrix with
     mat4 translate(1.0f);
     MatTranslate(translate, vec3(tx, ty, 0.0f));
 
-    mat4 newProjectionViewRender = scale * translate * cascade[i].ProjectionViewRender();
+    mat4 newProjectionViewRender = scale * translate * clipmap[i].ProjectionViewRender();
 {% endhighlight %}
 
-Now for rendering this cascade, `newProjectionViewRender` is used. This will save on a lot of performance because we can set the viewport bounds to be only the area of the virtual screen that changed. But now we run into another problem. Our new projection view matrix will generate fragments with depth values that we want to store into the shadow map, but how to we translate them to physical memory locations?
+Now for rendering this clipmap, `newProjectionViewRender` is used. This will save on a lot of performance because we can set the viewport bounds to be only the area of the virtual screen that changed.
 
 # Mapping Virtual Memory to Physical Memory
 
@@ -281,7 +290,7 @@ $$
 $$
 
 
-Where $$d_k$$ is the maximum view-space extent of the first clipmap cascade and $$z$$ is the maximum depth. Each cascade after the first maintains the same maximum depth but doubles the extent ($$d_k$$). Because of this, only the first matrix needs to be passed into the shader and the rest can be derived.
+Where $$d_k$$ is the maximum view-space extent of the first clipmap and $$z$$ is the maximum depth. Each clipmap after the first maintains the same maximum depth but doubles the extent ($$d_k$$). Because of this, only the first matrix needs to be passed into the shader and the rest can be derived.
 
 The global clip origin **(0, 0, 0)** view-projection matrix is created by multiplying the orthographic projection above with the rotation-only directional light view matrix.
 
@@ -367,18 +376,18 @@ $$
     \end{align*}
 $$
 
-This gives us NDC coordinates for the first clip map cascade. What if we want to convert the result back to what it would have been if we had used projection-view sample? We can subtract off $$2t_x/d_k, 2t_y/dk$$ from the result.
+This gives us NDC coordinates for the first clip map. What if we want to convert the result back to what it would have been if we had used projection-view sample? We can subtract off $$2t_x/d_k, 2t_y/dk$$ from the result.
 
-What about for the other cascades? We know that for each successive clip map cascade, $$d_k$$ doubles in size but everything else remains the same including the translation component. So, to convert from cascade 0 to cascade n, we can multiply the result by $$1/2^c$$ where $$c$$ is the cascade index from **[0, cascades - 1]**.
+What about for the other clipmaps? We know that for each successive clip map, $$d_k$$ doubles in size but everything else remains the same including the translation component. So, to convert from clipmap 0 to clipmap n, we can multiply the result by $$1/2^c$$ where $$c$$ is the clipmap index from **[0, clipmaps - 1]**.
 
-Because of this we only need to pass in the matrix for the very first clip map cascade and we can use it in the shader to convert to any other cascade, or back to the projection-view sample space. Here is some GLSL code that does this:
+Because of this we only need to pass in the matrix for the very first clip map and we can use it in the shader to convert to any other clipmap, or back to the projection-view sample space. Here is some GLSL code that does this:
 
 {% highlight glsl %}
     #define BITMASK_POW2(shift) (1 << shift)
 
     // For first clip map - rest are derived from this
     uniform mat4 vsmClipMap0ProjectionViewRender;
-    uniform uint vsmNumCascades;
+    uniform uint vsmNumClipMaps;
     uniform uint vsmNumPagesXY;
     uniform uint vsmTexelResolutionXY;
 
@@ -458,13 +467,13 @@ The final step is to convert these coordinates to actual physical coordinates th
 ![mapping](/assets/v0.11/svsms/VirtualMapping.png)
 (visual of above mapping code)
 
-And we're done! We now have a way to convert from world space coordinates -> virtual coordinates -> physical memory coordinates. If we revisit the rendering **step 6** from above, what this means is that we will use `newProjectionViewRender` for each cascade to rasterize the scene. For each fragment that we generate we want to convert it to physical coordinates and write the depth to that location.
+And we're done! We now have a way to convert from world space coordinates -> virtual coordinates -> physical memory coordinates. If we revisit the rendering **step 6** from above, what this means is that we will use `newProjectionViewRender` for each clipmap to rasterize the scene. For each fragment that we generate we want to convert it to physical coordinates and write the depth to that location.
 
 In practice this means something like `gl_Position` will be written in the vertex shader using `newProjectionViewRender`, but it will smooth out a set of texture coordinates that it generates using `ConvertWorldPosToPhysicalCoordinates` with the world position. This way the fragment shader uses the smoothed in texture coordinates to write out `gl_FragCoord.z` to the shadow map.
 
-# Selecting Cascades
+# Selecting Clipmaps
 
-Given a world position, how can we quickly determine which cascade it will fall in? We can look at the NDC output from multiplying the first cascade's projection view render with a world position.
+Given a world position, how can we quickly determine which clipmap it will fall in? We can look at the NDC output from multiplying the first clipmap's projection view render with a world position.
 
 $$
     \begin{align*}
@@ -484,7 +493,7 @@ $$
     \end{align*}
 $$
 
-Looking at the X and Y component, we know that if the world position fell within the first cascade, the NDC will be on the range of **[-1, 1]**. If the result is outside of this range, it means that we need to multiply $$n_x, n_y$$ by $$1/2^c$$. If we can solve for positive integer values of c, we get the cascade index.
+Looking at the X and Y component, we know that if the world position fell within the first clipmap, the NDC will be on the range of **[-1, 1]**. If the result is outside of this range, it means that we need to multiply $$n_x, n_y$$ by $$1/2^c$$. If we can solve for positive integer values of c, we get the clipmap index.
 
 $$
     \begin{align*}
@@ -536,7 +545,7 @@ $$
     \end{aligned}
 $$
 
-Since this is undefined at $$n_x=0$$ and $$log_2(1)=0$$ (first cascade index), we can constrain $$n_x$$ using max.
+Since this is undefined at $$n_x=0$$ and $$log_2(1)=0$$ (first clipmap index), we can constrain $$n_x$$ using max.
 
 $$
     \begin{aligned}
@@ -555,24 +564,24 @@ $$
 This is the solution for $$n_x$$, but $$n_y$$ will also give us a value. When there is a situation where the two results are different, the largest will be the correct answer. Here is some GLSL code:
 
 {% highlight glsl %}
-int VsmCalculateCascadeIndexFromWorldPos(in vec3 worldPos) {
-    // Get the normalized device coordinates (NDC) for the first cascade
+int VsmCalculateClipmapIndexFromWorldPos(in vec3 worldPos) {
+    // Get the normalized device coordinates (NDC) for the first clipmap
     vec2 ndc = VsmCalculateRenderClipValueFromWorldPos(worldPos, 0).xy;
 
-    vec2 cascadeIndex = vec2(
+    vec2 clipmapIndex = vec2(
         ceil(log2(max(abs(ndc.x), 1))),
         ceil(log2(max(abs(ndc.y), 1)))
     );
 
-    return int(max(cascadeIndex.x, cascadeIndex.y));
+    return int(max(clipmapIndex.x, clipmapIndex.y));
 }
 {% endhighlight %}
 
-Here is a visual of cascades changing as the camera moves closer or further from geometry:
+Here is a visual of clipmap changing as the camera moves closer or further from geometry:
 
 <img src="/assets/v0.11/svsms/VSM_Cascade_Change.gif" alt="cascade_change" />
 
-When pages become visually smaller and change in color tone this is an indication they are part of finer cascades. Visually larger pages are an indication they are part of coarser cascades.
+When pages become visually smaller and change in color tone this is an indication they are part of finer clipmaps. Visually larger pages are an indication they are part of coarser clipmaps.
 
 # Cache Invalidation Events
 
@@ -592,7 +601,7 @@ Here is a visual of the location of the pages changing because of directional li
 
 Another event resulting in cache invalidations is when objects in the scene move around. There are at least two approaches to dealing with this. The first is to render static and dynamic objects into the same clipmaps. When an object moves its AABB could be used to check which pages it overlaps with and then mark those as invalid. 
 
-The second is to maintain two sets of clipmap cascades: one for static objects and one for dynamic objects. Dynamic object clipmaps can be tailored towards being updated almost entirely every frame whereas static objects can use the incremental update approach as the camera moves.
+The second is to maintain two sets of clipmaps: one for static objects and one for dynamic objects. Dynamic object clipmaps can be tailored towards being updated almost entirely every frame whereas static objects can use the incremental update approach as the camera moves.
 
 # Allocation Strategy
 
@@ -629,7 +638,7 @@ Hardware sparse leverages driver/API sparse memory management+binding support. S
 
 Each implementation will need to decide how to deal with the case of a memory pool running out of memory during a given frame. It's possible that more pages will be requested than a single memory pool can handle. One approach would be to trigger a page fault like normal, then allow the CPU to allocate a whole new block to pull memory from. For example, say each pool is a 1024x1024 2D texture (8 pages x 8 pages). If that pool runs out, the CPU could reserve another 1024x1024 pool and begin allocating from that. This could continue until some maximum upper bound is reached (either configued by the app or dictated by available VRAM). It would also be an option to later free that texture pool if none of the pages from it are currently referenced.
 
-Another approach would be to have a fixed-size texture pool that never grows or shrinks and evict pages corresponding to coarser cascades and prioritize putting them in the cascades closer to the camera. This would mean that if the current frame runs out of physical memory, it could rebalance the pages that will be rendered based on which ones are the highest priority (finer cascades) vs lower priority (coarser cascades).
+Another approach would be to have a fixed-size texture pool that never grows or shrinks and evict pages corresponding to coarser clipmaps and prioritize putting them in the clipmaps closer to the camera. This would mean that if the current frame runs out of physical memory, it could rebalance the pages that will be rendered based on which ones are the highest priority (finer clipmaps) vs lower priority (coarser clipmaps).
 
 Another approach would be to process each clipmap separately all the way through final shading by selecting the clipmap, allocating memory, rendering shadows, shading, moving to next clipmap. This could be very difficult to optimize the performance of, but it would guarantee that each clipmap would have access to all available physical memory if required. It would look something like:
 
@@ -651,9 +660,9 @@ One possible performance optimization is to add a configurable render budget for
 
 ![mips](/assets/v0.11/svsms/VSM_Mips.png)
 
-From this image we can see that each cascade, even though not strictly part of a mip chain, can still be used as one since each successive cascade is fully capable of representing everything from the previous cascade, just at a lower effective resolution.
+From this image we can see that each clipmap, even though not strictly part of a mip chain, can still be used as one since each successive clipmap is fully capable of representing everything from the previous clipmap, just at a lower effective resolution.
 
-This allows us to specify one or more cascades to serve as the lowest/coarsest levels in the mip chain. When we perform the depth buffer analysis, not only will we mark the pages in the finest detail mip levels, but we will also mark the corresponding pages in the lowest mip levels.
+This allows us to specify one or more clipmaps to serve as the lowest/coarsest levels in the mip chain. When we perform the depth buffer analysis, not only will we mark the pages in the finest detail mip levels, but we will also mark the corresponding pages in the lowest mip levels.
 
 Then what we can do when rendering is to set a budget for how many pages from the finest mips to process before saving them for the next frame. The lowest mips will be rendered fully every frame so we can use them as a fallback when data is not available at a higher resolution.
 
@@ -689,7 +698,7 @@ The last option is to abandon hardware shadow filtering completely and write you
 
 # Post-Processing Effects
 
-There will be times when certain post processing effects such as volumetric lighting might require data to be present in the shadow map that is outside of the current view of the camera. When this is the case, it will be necessary to add some extra logic during the page marking/depth prepass stage. The clipmap cascade that is marked will depend on what level of resolution the post processing effect will need. If it can get away with low resolution, then it can go with the further/coarser cascades to save on bandwidth and performance.
+There will be times when certain post processing effects such as volumetric lighting might require data to be present in the shadow map that is outside of the current view of the camera. When this is the case, it will be necessary to add some extra logic during the page marking/depth prepass stage. The clipmap that is marked will depend on what level of resolution the post processing effect will need. If it can get away with low resolution, then it can go with the further/coarser clipmaps to save on bandwidth and performance.
 
 Thanks for reading!
 
