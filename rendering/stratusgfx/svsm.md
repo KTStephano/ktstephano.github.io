@@ -493,39 +493,15 @@ $$
     \end{align*}
 $$
 
-Looking at the X and Y component, we know that if the world position fell within the first clipmap, the NDC will be on the range of **[-1, 1]**. If the result is outside of this range, it means that we need to multiply $$n_x, n_y$$ by $$1/2^c$$. If we can solve for positive integer values of c, we get the clipmap index.
+Looking at the X and Y component, we know that if the world position fell within the first clipmap, the NDC will be on the range of **[-1, 1]**. If the result is outside of this range, it means that we need to multiply $$(n_x, n_y)$$ by $$(1/2^{c_x}, 1/2^{c_y})$$ to bring it back within the **[-1, 1]** range. If we can solve for positive integer values of $$(c_x, c_y)$$, we get back two values representing the clipmaps where this is true.
 
 $$
     \begin{align*}
     \begin{bmatrix} 
-    0 \\
-    0 \\
-	\end{bmatrix} \leq
-    \begin{bmatrix} 
-    n_x \times 1/2^c \\
-    n_y \times 1/2^c \\
+    |n_x| \times 1/2^{\lceil c_x \rceil} \\
+    |n_y| \times 1/2^{\lceil c_y \rceil} \\
 	\end{bmatrix}
-    \leq     
-    \begin{bmatrix} 
-    1 \\
-    1 \\
-	\end{bmatrix}
-    \end{align*}
-$$
-
-We can constrain this to positive values by taking the absolute value of $$n_x, n_y$$.
-
-$$
-    \begin{align*}
-    \begin{bmatrix} 
-    0 \\
-    0 \\
-	\end{bmatrix} \leq
-    \begin{bmatrix} 
-    | n_x | \times 1/2^c \\
-    | n_y | \times 1/2^c \\
-	\end{bmatrix}
-    \leq     
+    =     
     \begin{bmatrix} 
     1 \\
     1 \\
@@ -537,27 +513,20 @@ Focusing on solving for just one of them since both will be the same format:
 
 $$
     \begin{aligned}
-    0 &\leq | n_x | / 2^c \leq 1 \\
-    => 0 &\leq | n_x | \leq 2^c \\
-    => 0 &\leq log_2(| n_x |) \leq log_2(2^c) \\
-    => 0 &\leq log_2(| n_x |) \leq clog_2(2) \\
-    => 0 &\leq log_2(| n_x |) \leq c \\
+    & | n_x | \times 1/2^{\lceil c_x \rceil} = 1 \\
+    & (| n_x | \times 1/2^{\lceil c_x \rceil}) \times 2^{\lceil c_x \rceil} = 2^{\lceil c_x \rceil} \\
+    & | n_x | = 2^{\lceil c_x \rceil} \\
+    & \lceil log_2(| n_x |) \rceil = log_2(2^{\lceil c_x \rceil}) \\
+    & \lceil log_2(| n_x |) \rceil = {\lceil c_x \rceil} \times log_2(2) \\
+    & \lceil log_2(| n_x |) \rceil = {\lceil c_x \rceil} \\
     \end{aligned}
 $$
 
-Since this is undefined at $$n_x=0$$ and $$log_2(1)=0$$ (first clipmap index), we can constrain $$n_x$$ using max.
+We take the ceiling of $$log_2$$ on the left since otherwise it would give us fractional solutions which we don't want here. Since this is undefined at $$n_x=0$$ and $$log_2(1)=0$$ (first clipmap index), we can constrain $$n_x$$ using max.
 
 $$
     \begin{aligned}
-    0 &\leq log_2(max(| n_x |, 1)) \leq c \\
-    \end{aligned}
-$$
-
-This can still give us fractional results but we only care about positive integer solutions. So we can use ceil on the result.
-
-$$
-    \begin{aligned}
-    \lceil log_2(max(| n_x |, 1)) \rceil = c  \\
+    & \lceil log_2(max(| n_x |, 1)) \rceil = {\lceil c_x \rceil}
     \end{aligned}
 $$
 
