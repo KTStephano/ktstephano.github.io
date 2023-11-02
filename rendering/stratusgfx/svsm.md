@@ -10,7 +10,7 @@ use_math: true
 
 The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the physical memory pages (squares) where each color represents a different shadow clipmap/cascade.
 
-**Feedback is greatly appreciated.**
+**Feedback is greatly appreciated!**
 
 **Last edited: Nov 2, 2023**
 
