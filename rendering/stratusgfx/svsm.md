@@ -546,6 +546,10 @@ int VsmCalculateClipmapIndexFromWorldPos(in vec3 worldPos) {
 }
 {% endhighlight %}
 
+Here is a graph of the above function to show how the clipmap index changes as the NDC value changes.
+
+![graph](/assets/v0.11/svsms/ClipmapSelectGraph.png)
+
 Here is a visual of clipmap changing as the camera moves closer or further from geometry:
 
 <img src="/assets/v0.11/svsms/VSM_Cascade_Change.gif" alt="cascade_change" />
