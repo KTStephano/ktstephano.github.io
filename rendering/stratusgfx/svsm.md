@@ -262,7 +262,7 @@ Here is a possible implementation of a page table entry (32 bits per entry):
 
 ### ClipMap Matrix Structure
 
-At this stage we need to define a clear way of converting from world coordinates to virtual page coordinates and then to physical texel coordinates. To do this we are going to define two different groups of matrices: projection-view sample and projection-view render. Each frame the projection-view render matrix will potentially change via translation and represents the clip origin + extent, but the projection-view sample matrix will either never change or very rarely change (depending on your use case). The sample matrix is used to get virtual uv coords that we can use to access the page table and so its origin will be set to **(0, 0, 0)**. The render matrix is used when rendering the shadow map using normal hardware rasterization and its origin changes as the camera moves through the scene.
+At this stage we need to define a clear way of converting from world coordinates to virtual page coordinates and then to physical texel coordinates. To do this we are going to define two different groups of matrices: projection-view sample and projection-view render. Each frame the projection-view render matrix will potentially change via translation and represents the clip origin + extent, but the projection-view sample matrix will either never change or very rarely change (depending on your use case and how far the camera has moved from world origin). The sample matrix is used to get virtual uv coords that we can use to access the page table and so its origin will be set to **(0, 0, 0)**. The render matrix is used when rendering the shadow map using normal hardware rasterization and its origin changes as the camera moves through the scene.
 
 Once we have these two groups of matrices, the steps of moving from virtual to physical are as follows:
 
@@ -578,7 +578,9 @@ The second is to maintain two sets of clipmaps: one for static objects and one f
 
 # Allocation Strategy
 
-An easy way to handle allocation for this virtual memory system is to pack a list of free pages into a shader storage buffer object (SSBO). When the GPU wants to allocate, it can remove the topmost entry using shader atomics and add that page to the corresponding page table entry. When it wants to deallocate, it can add the page back to the front of the list again using shader atomics.
+An easy way to handle allocation for this virtual memory system is to pack a list of free pages into a shader storage buffer object (SSBO). When the GPU wants to allocate, it can remove the topmost entry using shader atomics and add that page to the corresponding page table entry. When it wants to deallocate, it can add the page back to the front of the list again using shader atomics. With this system the GPU will add pages back to the free list whenever its page table frame marker exceeds some value less than the max supported by the frame marker bits.
+
+Another option would be to implement a cache using one a replacement policy such as least recently used (LRU). More cache replacement policies can be found on [this Wikipedia article](https://en.wikipedia.org/wiki/Cache_replacement_policies).
 
 In the following gif the lower left shows the first memory pool as it pulls pages from the free list or adds them back. Black = unallocated.
 
