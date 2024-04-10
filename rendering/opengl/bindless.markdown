@@ -362,7 +362,7 @@ void main() {
     vec4 color = vec4(0.1, 0.1, 0.1, 1);
     if (hasAlbedo) {
         // Notice the cast to sampler2D from the uvec2 handle
-        color = texture(sampler2D(albedoHandle, fsTexCoord)).rgba;
+        color = texture(sampler2D(albedoHandle), fsTexCoord).rgba;
     }
 
     ... rest of shader ...
