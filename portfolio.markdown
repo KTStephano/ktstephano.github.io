@@ -26,8 +26,6 @@ layout: home
 
 ![sanmiguel3](/assets/v0.10/SanMiguel_GI2.0.png)
 
-![sanmiguel4](/assets/v0.11/SanMiguel_VSM_GI2.png)
-
 (3D Model: San Miguel)
 
 ![bistro1](/assets/v0.11/Bistro_VSM_GI.png)
