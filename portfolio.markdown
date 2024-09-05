@@ -24,11 +24,17 @@ layout: home
 
 ![sanmiguel2](/assets/v0.10/SanMiguel_Balcony2.png)
 
-![sanmiguel3](/assets/v0.11/SanMiguel_VSM_GI2.png)
+![sanmiguel3](/assets/v0.10/SanMiguel_GI2.0.png)
+
+![sanmiguel4](/assets/v0.11/SanMiguel_VSM_GI2.png)
 
 (3D Model: San Miguel)
 
-![bistro](/assets/v0.11/Bistro_VSM_GI.png)
+![bistro1](/assets/v0.11/Bistro_VSM_GI.png)
+
+![bistro2](/assets/v0.10/Bistro1.png)
+
+![bistro3](/assets/v0.10/Bistro2.png)
 
 (3D Model: Bistro)
 
