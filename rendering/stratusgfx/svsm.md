@@ -8,7 +8,7 @@ use_math: true
 ![bistro1](/assets/v0.11/svsms/VSM1_Bistrov2.png)
 ![bistro2](/assets/v0.11/svsms/VSM2_Bistrov2.png)
 
-The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the physical memory pages (squares) where each color represents a different shadow clipmap/cascade.
+The top is the Bistro scene rendered with multiple 8K resolution sparse virtual shadow maps. The bottom is a visualization of the virtual memory pages (squares) where each color represents a different shadow clipmap/cascade.
 
 **Feedback is greatly appreciated!**
 
