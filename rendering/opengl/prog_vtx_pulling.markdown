@@ -7,7 +7,7 @@ title: Programmable Vertex Pulling
 
 This is part of a tutorial series teaching advanced modern OpenGL. To use all features to their fullest you will need to target OpenGL 4.6. These articles assume you have familiarity with OpenGL.
 
-With the old way of using OpenGL, it required that you send things like vertex, uv, and normal data in a format that the driver could understand and use. This meant using vertex buffer objects (VBOs) and vertex array objects (VAOs). With programmable vertex pulling we will be getting rid of VBOs and VAOs entirely and using our own data format with manual data unpacking in the shader. This gives us a lot of flexibility with how we structure our data and will be very useful in future articles that will discuss other advanced techniques.
+With the old way of using OpenGL, it required that you send things like vertex, uv, and normal data in a format that the driver could understand and use. This meant using vertex buffer objects (VBOs) and vertex array objects (VAOs). With programmable vertex pulling we will be getting rid of VBOs entirely and using our own data format with manual data unpacking in the shader. This gives us a lot of flexibility with how we structure our data and will be very useful in future articles that will discuss other advanced techniques.
 
 If you haven't already, make sure you check out the [Shader Storage Buffer Objects (SSBOs)](/rendering/opengl/ssbos) tutorial since we will be using those here.
 
@@ -95,6 +95,8 @@ This will work for both indexed and non-indexed drawing and can be extended to f
 
 The advantage of this is that we get OpenGL out of the way when it comes to interpreting our data and instead write the code to deal with our data directly a lot like we would do with C++, but now in GLSL. This offers us a lot of flexibility both with vertex data but other with other data that will be discussed in future tutorials.
 
+Based on discussion in the comments, we will be using an empty VAO to avoid issues. More information can be found [here.](https://www.khronos.org/opengl/wiki/Vertex_Rendering/Rendering_Failure).
+
 *main.cpp*
 {% highlight c++ %}
 // We use arrays of floats since they will be tightly packed with the
@@ -109,6 +111,10 @@ struct VertexData {
 std::vector<VertexData> vertices;
 ... populate vertices with either hardcoded data or data you load from a file ...
 
+// Create an empty VAO object to avoid errors
+unsigned int emptyVAO;
+glGenVertexArrays(1, &emptyVAO);
+
 // Create and fill the mesh data buffer
 GLuint vertexDataBuffer;
 glCreateBuffers(1, &vertexDataBuffer);
@@ -117,6 +123,10 @@ glNamedBufferStorage(vertexDataBuffer,
                      sizeof(VertexData) * vertices.size(),
                      (const void *)vertices.data(), 
                      GL_DYNAMIC_STORAGE_BIT);
+
+// Bind the empty VAO
+// See https://www.khronos.org/opengl/wiki/Vertex_Rendering/Rendering_Failure
+glBindVertexArray(emptyVAO);
 
 // Bind the buffer to location 0 - matches (binding = 0) for ssbo1 in the
 // vertex shader listed below
@@ -190,7 +200,7 @@ void main()
 }
 {% endhighlight %}
 
-No more VBOs or VAOs. Nice!
+Now we have access to a very convenient vertex processing method. Nice!
 
 ## Learn OpenGL Fundamentals
 * [https://learnopengl.com](https://learnopengl.com)
