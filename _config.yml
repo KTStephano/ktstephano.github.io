@@ -76,7 +76,11 @@ utterances:
 
 header_pages:
   - index.markdown
-#  - portfolio.markdown
+  #- portfolio.markdown
+
+extern_pages:
+  - title: Portfolio
+    url: https://ktstephano.github.io/portfolio/
 
 # TOC Settings - see https://heymichellemac.com/table-of-contents-jekyll
 toc:
