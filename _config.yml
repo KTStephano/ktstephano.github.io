@@ -76,7 +76,7 @@ utterances:
 
 header_pages:
   - index.markdown
-  - portfolio.markdown
+#  - portfolio.markdown
 
 # TOC Settings - see https://heymichellemac.com/table-of-contents-jekyll
 toc:
