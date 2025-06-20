@@ -46,8 +46,8 @@ The last parameter to glNamedBufferStorage is the usage flag. The following are 
 GL_DYNAMIC_STORAGE_BIT | Buffer contents can be directly updated using glBufferSubData
 GL_MAP_READ_BIT        | Buffer memory will be mapped for reading by the CPU
 GL_MAP_WRITE_BIT       | Buffer memory will be mapped for writing by the CPU
-GL_MAP_PERSISTENT_BIT  | CPU may request that the memory be read from or written to by the GPU while the memory is still mapped. The CPU's pointer to the memory should remain valid even after the GPU writes to it.
-GL_MAP_COHERENT_BIT    | When used with GL_MAP_PERSISTENT_BIT, reads and writes from CPU and GPU must be kept coherent
+GL_MAP_PERSISTENT_BIT  | CPU may request that the memory be read from or written to by the GPU while the memory is still mapped. The CPU's pointer to the memory should remain valid even after draw or dispatch commands have been issued.
+GL_MAP_COHERENT_BIT    | When used with GL_MAP_PERSISTENT_BIT, reads and writes from CPU and GPU must be kept coherent while the memory is still mapped on the CPU side (`glMapBufferRange`). This means data writes to the buffer from the GPU will be made immediately visible to the CPU and vice versa, without the application code having to issue an explicit memory barrier or fence sync.
 GL_CLIENT_STORAGE_BIT  | Whenever possible the driver should prefer backing the data with system memory rather than GPU memory
 
 For more information, [see this page](https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBufferStorage.xhtml).
