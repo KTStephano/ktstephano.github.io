@@ -347,6 +347,8 @@ But on other hardware this could cause major issues since the code path leading 
 
 For an example of this, see this shader: [https://github.com/JuanDiegoMontoya/GLest-Rendererer/blob/main/glRenderer/Resources/Shaders/gBufferBindless.fs](https://github.com/JuanDiegoMontoya/GLest-Rendererer/blob/main/glRenderer/Resources/Shaders/gBufferBindless.fs)
 
+For a great writeup on this topic, see: [https://gist.github.com/JuanDiegoMontoya/55482fc04d70e83729bb9528ecdc1c61](https://gist.github.com/JuanDiegoMontoya/55482fc04d70e83729bb9528ecdc1c61)
+
 After making a 64-bit texture handle resident, it is possible to pass in that texture as an array of uvec2 instead of an explicit sampler2D. As a short example modified from the link above:
 
 {% highlight glsl %}
