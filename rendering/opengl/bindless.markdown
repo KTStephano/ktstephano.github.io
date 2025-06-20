@@ -332,6 +332,8 @@ Running this program produces the following result on a GTX 1060:
 
 For information on what dynamically uniform expressions are, see [https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)#Dynamically_uniform_expression](https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)#Dynamically_uniform_expression).
 
+For a great writeup on this topic, see: [https://gist.github.com/JuanDiegoMontoya/55482fc04d70e83729bb9528ecdc1c61](https://gist.github.com/JuanDiegoMontoya/55482fc04d70e83729bb9528ecdc1c61)
+
 In the above shader we are pulling the texture using the value inside of `flat in int fsInstance;`. Since we are drawing multiple instances with the same draw command, this will **not** be a dynamically uniform expression. Certain hardware supports this, for example the GTX 1060 I used supports it with no other extensions needed except bindless.
 
 But on other hardware this could cause major issues since the code path leading to the texture access needs to be dynamically uniform. There are two main workarounds:
@@ -346,8 +348,6 @@ But on other hardware this could cause major issues since the code path leading 
 ## uvec2 To sampler
 
 For an example of this, see this shader: [https://github.com/JuanDiegoMontoya/GLest-Rendererer/blob/main/glRenderer/Resources/Shaders/gBufferBindless.fs](https://github.com/JuanDiegoMontoya/GLest-Rendererer/blob/main/glRenderer/Resources/Shaders/gBufferBindless.fs)
-
-For a great writeup on this topic, see: [https://gist.github.com/JuanDiegoMontoya/55482fc04d70e83729bb9528ecdc1c61](https://gist.github.com/JuanDiegoMontoya/55482fc04d70e83729bb9528ecdc1c61)
 
 After making a 64-bit texture handle resident, it is possible to pass in that texture as an array of uvec2 instead of an explicit sampler2D. As a short example modified from the link above:
 
